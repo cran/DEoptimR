@@ -63,7 +63,7 @@ JDEoptim <-
         stopifnot(length(meq) == 1, meq == as.integer(meq), meq >= 0,
                   is.numeric(eps), is.finite(eps), eps > 0)
         if (length(eps) == 1)
-            eps <- rep_len(eps, meq)
+            eps <- rep.int(eps, meq)
         else if (length(eps) != meq)
             stop("eps must be either of length meq, or length 1")
     }
