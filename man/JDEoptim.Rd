@@ -78,7 +78,9 @@ JDEoptim(lower, upper, fn,
 
   Constraint handling is done using the approach described in Zhang and Rangaiah (2012).
 
-  DE is easily extended to deal with \emph{mixed integer nonlinear programming} problems using a small variation of the technique presented by Lampinen and Zelinka (1999). Integer values are obtained by means of the \code{floor()} function for the evaluation of the objective function. This is because DE itself works with continuous variables. Additionally, each upper bound of the integer variables should be added by \code{1}.
+  Any DE variant is easily extended to deal with \emph{mixed integer nonlinear programming} problems using a small variation of the technique presented by Lampinen and Zelinka (1999). Integer values are obtained by means of the \code{floor()} function \emph{only} for the evaluation of the objective function. This is because DE itself works with continuous variables. Additionally, each upper bound of the integer variables should be added by \code{1}.
+
+  Notice that the final solution needs to be \emph{converted with \code{floor()}} to obtain its \emph{integer} elements.
 
   The algorithm is stopped if
   \deqn{\frac{\mathrm{FUN}\{[\mathrm{fn}(x_1),\ldots,\mathrm{fn}(x_\mathrm{npop})]\} - \mathrm{fn}(x_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
@@ -103,7 +105,7 @@ where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{f
   It is possible to perform a warm start, \emph{i.e.}, starting from the previous run and resume optimization, using \code{NP = 0} and the component \code{poppar} for the \code{add_to_init_pop} argument.
 }
 \author{
-  Eduardo L. T. Conceicao \email{econceicao@kanguru.pt}
+  Eduardo L. T. Conceicao \email{mail@eduardoconceicao.org}
 }
 \references{
   Babu, B. V. and Angira, R. (2006)
@@ -273,9 +275,12 @@ pressure_vessel_B <-
                750.0*1728.0 - pi*x3^2*x4 - 4/3*pi*x3^3)
          })
 
-JDEoptim(c( 18,    10,     0.0,   0.0),
-         c(200+1, 200+1, 240.0, 240.0),
-         fn = pressure_vessel_B$obj,
-         constr = pressure_vessel_B$con,
-         tol = 1e-7, trace = TRUE, triter = 50)
+res <- JDEoptim(c( 18,    10,     0.0,   0.0),
+                c(200+1, 200+1, 240.0, 240.0),
+                fn = pressure_vessel_B$obj,
+                constr = pressure_vessel_B$con,
+                tol = 1e-7, trace = TRUE, triter = 50)
+res
+# Now convert to integer x1 and x2
+c(floor(res$par[1:2]), res$par[3:4])
 }
