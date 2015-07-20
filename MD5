@@ -1,7 +1,7 @@
-6a817b717b5cd5ac2a0ff49bc2dbc9e0 *DESCRIPTION
-ef386e2a506ccbccf461e3ae1a455c35 *NAMESPACE
+23279e33e1a418cbae9ff1f09c83f7ea *DESCRIPTION
+e957909d8b7160ad012b9ffd6d073b10 *NAMESPACE
 3a8bc800367dfee4e21eeaf9c1282e40 *NEWS
-c94136f99e72f93a5b737cf9d9c12194 *R/JDEoptim.R
+4d0ac2e0b78ddfc19505c0cbd8c4604d *R/JDEoptim.R
 b4a11b18bccefaffdfe2874c61b951a3 *inst/xtraR/opt-test-funs.R
-e5d147d9f61088d4df80bde25ebc640e *man/JDEoptim.Rd
+41c87358e3f5107a70db1a4efba6d95e *man/JDEoptim.Rd
 5daa4617c3caed9a2354487ec6079026 *tests/JDEoptim-tst.R

@@ -158,6 +158,10 @@ where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{f
   flexible manner.
 }
 \examples{
+\donttest{
+# NOTE: Examples were excluded from testing
+#       to reduce package check time.
+
 # Use a preset seed so test values are reproducible.
 set.seed(1234)
 
@@ -283,4 +287,5 @@ res <- JDEoptim(c( 18,    10,     0.0,   0.0),
 res
 # Now convert to integer x1 and x2
 c(floor(res$par[1:2]), res$par[3:4])
+}
 }

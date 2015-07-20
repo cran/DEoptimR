@@ -7,7 +7,7 @@ JDEoptim <-
              add_to_init_pop = NULL, trace = FALSE, triter = 1,
              details = FALSE, ...)
 
-#   Copyright 2013, Eduardo L. T. Conceicao
+#   Copyright 2013, 2014, Eduardo L. T. Conceicao
 #   Available under the GPL (>= 2)
 
 {
@@ -69,8 +69,7 @@ JDEoptim <-
     }
     stopifnot(length(NP) == 1, NP == as.integer(NP),
 	      length(Fl) == 1, is.numeric(Fl),
-	      length(Fu) == 1, is.numeric(Fu),
-	      Fl <= Fu)
+	      length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
     stopifnot(length(tau1) == 1, is.numeric(tau1), 0 <= tau1, tau1 <= 1,
 	      length(tau2) == 1, is.numeric(tau2), 0 <= tau2, tau2 <= 1,
 	      length(tau3) == 1, is.numeric(tau3), 0 <= tau3, tau3 <= 1)
@@ -258,9 +257,7 @@ JDEoptim <-
             # CRi update
             CRtrial <- if (runif(1) <= tau2) runif(1) else CR[i]
             # pFi update
-            pFtrial <- if (runif(1) <= tau3)
-                runif(1)
-            else pF[i]
+            pFtrial <- if (runif(1) <= tau3) runif(1) else pF[i]
 
             # DE/rand/1/either-or/bin
             X.i <- pop[, i]
