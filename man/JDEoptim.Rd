@@ -44,11 +44,11 @@ JDEoptim(lower, upper, fn,
 
   \item{Fu}{an optional scalar which represents the maximum value that the \emph{scaling factor} \code{F} could take. Default is \code{1}, which is almost always satisfactory.}
 
-  \item{tau1}{an optional scalar which represents a probability in the mutation strategy DE/rand/1/either-or. Defaults to \code{0.1}.}
+  \item{tau1}{an optional scalar which represents the probability that the \emph{scaling factor} \code{F} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
 
-  \item{tau2}{an optional scalar which represents the probability that the \emph{scaling factor} \code{F} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
+  \item{tau2}{an optional constant value which represents the probability that the \emph{crossover probability} \code{CR} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
 
-  \item{tau3}{an optional constant value which represents the probability that the \emph{crossover probability} \code{CR} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
+  \item{tau3}{an optional scalar which represents the probability that the \emph{mutation probability} \eqn{p_F}{pF} in the mutation strategy DE/rand/1/either-or is updated. Defaults to \code{0.1}.}
 
   \item{jitter_factor}{an optional tuning constant for \emph{jitter}. If \code{NULL} only \emph{dither} is used. Defaults to \code{0.001}.}
 
@@ -76,7 +76,7 @@ JDEoptim(lower, upper, fn,
 
   This implementation differs from the original description, most notably in the use of the \emph{DE/rand/1/either-or} mutation strategy (Price \emph{et al.}, 2005), combination of \emph{jitter with dither} (Storn 2008), and its use of only a \emph{single population} (Babu and Angira 2006) instead of separate current and child populations as in classical DE.
 
-  Constraint handling is done using the approach described in Zhang and Rangaiah (2012).
+  Constraint handling is done using the approach described in Zhang and Rangaiah (2012), but with a different reduction updating scheme for the constraint relaxation value (\eqn{\mu}). Instead of doing it once for every generation or iteration, the reduction is triggered for every new feasible trial candidate solution selected for inclusion in the next generation when the \emph{constraints do not contain equalities}. If the constraints \emph{include equalities}, then the reduction is triggered only whenever a feasible solution in the current generation is replaced.
 
   Any DE variant is easily extended to deal with \emph{mixed integer nonlinear programming} problems using a small variation of the technique presented by Lampinen and Zelinka (1999). Integer values are obtained by means of the \code{floor()} function \emph{only} for the evaluation of the objective function. This is because DE itself works with continuous variables. Additionally, each upper bound of the integer variables should be added by \code{1}.
 
