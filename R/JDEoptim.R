@@ -1,13 +1,14 @@
 JDEoptim <-
     function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
-             NP = 10*d, Fl = 0.1, Fu = 1, tau1 = 0.1, tau2 = 0.1, tau3 = 0.1,
+             NP = 10*d, Fl = 0.1, Fu = 1,
+             tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
              jitter_factor = 0.001,
              tol = 1e-15, maxiter = 200*d, fnscale = 1,
              FUN = c("median", "max"),
              add_to_init_pop = NULL, trace = FALSE, triter = 1,
              details = FALSE, ...)
 
-#   Copyright 2013, 2014, Eduardo L. T. Conceicao
+#   Copyright 2013, 2014, 2016, Eduardo L. T. Conceicao
 #   Available under the GPL (>= 2)
 
 {
@@ -70,9 +71,9 @@ JDEoptim <-
     stopifnot(length(NP) == 1, NP == as.integer(NP),
 	      length(Fl) == 1, is.numeric(Fl),
 	      length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
-    stopifnot(length(tau1) == 1, is.numeric(tau1), 0 <= tau1, tau1 <= 1,
-	      length(tau2) == 1, is.numeric(tau2), 0 <= tau2, tau2 <= 1,
-	      length(tau3) == 1, is.numeric(tau3), 0 <= tau3, tau3 <= 1)
+    stopifnot(length(tau_F) == 1, is.numeric(tau_F), 0 <= tau_F, tau_F <= 1,
+	      length(tau_CR) == 1, is.numeric(tau_CR), 0 <= tau_CR, tau_CR <= 1,
+	      length(tau_pF) == 1, is.numeric(tau_pF), 0 <= tau_pF, tau_pF <= 1)
     if (!is.null(jitter_factor))
         stopifnot(length(jitter_factor) == 1, is.numeric(jitter_factor))
     stopifnot(length(tol) == 1, is.numeric(tol),
@@ -249,15 +250,15 @@ JDEoptim <-
             # Differential evolution research - trends and open questions.
             # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
             # SCI 143, Springer-Verlag, pp 11-12
-            Ftrial <- if (runif(1) <= tau1) {
+            Ftrial <- if (runif(1) <= tau_F) {
                 if (use.jitter)
                     runif(1, Fl, Fu) * (1 + jitter_factor*runif(d, -0.5, 0.5))
                 else runif(1, Fl, Fu)
             } else F[, i]
             # CRi update
-            CRtrial <- if (runif(1) <= tau2) runif(1) else CR[i]
+            CRtrial <- if (runif(1) <= tau_CR) runif(1) else CR[i]
             # pFi update
-            pFtrial <- if (runif(1) <= tau3) runif(1) else pF[i]
+            pFtrial <- if (runif(1) <= tau_pF) runif(1) else pF[i]
 
             # DE/rand/1/either-or/bin
             X.i <- pop[, i]
