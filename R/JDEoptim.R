@@ -4,8 +4,9 @@ JDEoptim <-
              tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
              jitter_factor = 0.001,
              tol = 1e-15, maxiter = 200*d, fnscale = 1,
-             FUN = c("median", "max"),
-             add_to_init_pop = NULL, trace = FALSE, triter = 1,
+             compare_to = c("median", "max"),
+             add_to_init_pop = NULL,
+             trace = FALSE, triter = 1,
              details = FALSE, ...)
 
 #   Copyright 2013, 2014, 2016, Eduardo L. T. Conceicao
@@ -51,7 +52,7 @@ JDEoptim <-
         else which.min
 
     # Check input parameters
-    FUN <- match.arg(FUN)
+    compare_to <- match.arg(compare_to)
     d <- length(lower)
     if (length(upper) != d)
         stop("'lower' must have same length as 'upper'")
@@ -198,7 +199,9 @@ JDEoptim <-
     # constrained single-objective optimization.
     # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
     # SCI 143, Springer-Verlag, pp 111-138
-    conv <- expression(( do.call(FUN, list(fpop)) - fpop[x.best.ind] )/fnscale)
+    conv <- expression(
+      ( do.call(compare_to, list(fpop)) - fpop[x.best.ind] )/fnscale
+    )
     pop <- matrix(runif(NP*d, lower, upper), nrow = d)
     if (!is.null(add_to_init_pop)) {
         pop <- unname(cbind(pop, add_to_init_pop))

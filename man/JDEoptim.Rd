@@ -13,8 +13,9 @@ JDEoptim(lower, upper, fn,
     tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
     jitter_factor = 0.001,
     tol = 1e-15, maxiter = 200*d, fnscale = 1,
-    FUN = c("median", "max"),
-    add_to_init_pop = NULL, trace = FALSE, triter = 1,
+    compare_to = c("median", "max"),
+    add_to_init_pop = NULL,
+    trace = FALSE, triter = 1,
     details = FALSE, ...)
 }
 \arguments{
@@ -36,7 +37,7 @@ JDEoptim(lower, upper, fn,
 
   \item{meq}{an optional positive integer specifying that the first \code{meq} constraints are treated as \emph{equality} constraints, all the remaining as \emph{inequality} constraints. Defaults to \code{0} (inequality constraints only).}
 
-  \item{eps}{an optional real vector of small positive tolerance values with length \code{meq} used in the transformation of equalities into inequalities of the form \eqn{|h_i(x)| - \epsilon \le 0}. A scalar value is expanded to apply to all equality constraints. Default is \code{1e-5}.}
+  \item{eps}{maximal admissible constraint violation for equality constraints. An optional real vector of small positive tolerance values with length \code{meq} used in the transformation of equalities into inequalities of the form \eqn{|h_i(x)| - \epsilon \le 0}. A scalar value is expanded to apply to all equality constraints. Default is \code{1e-5}.}
 
   \item{NP}{an optional positive integer giving the number of candidate solutions in the randomly distributed initial population. Defaults to \code{10*length(lower)}.}
 
@@ -58,7 +59,7 @@ JDEoptim(lower, upper, fn,
 
   \item{fnscale}{an optional positive scalar specifying the typical magnitude of \code{fn}. It is used only in the \emph{stopping criterion}. Defaults to \code{1}. See \sQuote{Details}.}
 
-  \item{FUN}{an optional character string controlling which function should be applied to the \code{fn} values of the candidate solutions in a generation to be compared with the so-far best one when evaluating the \emph{stopping criterion}. If \dQuote{\code{median}} the \code{median} function is used; else, if \dQuote{\code{max}} the \code{max} function is used. It defaults to \dQuote{\code{median}}. See \sQuote{Details}.}
+  \item{compare_to}{an optional character string controlling which function should be applied to the \code{fn} values of the candidate solutions in a generation to be compared with the so-far best one when evaluating the \emph{stopping criterion}. If \dQuote{\code{median}} the \code{median} function is used; else, if \dQuote{\code{max}} the \code{max} function is used. It defaults to \dQuote{\code{median}}. See \sQuote{Details}.}
 
   \item{add_to_init_pop}{an optional real vector of length \code{length(lower)} or matrix with \code{length(lower)} rows specifying initial values of the parameters to be optimized which are appended to the randomly generated initial population. It defaults to \code{NULL}.}
 
@@ -83,8 +84,8 @@ JDEoptim(lower, upper, fn,
   Notice that the final solution needs to be \emph{converted with \code{floor()}} to obtain its \emph{integer} elements.
 
   The algorithm is stopped if
-  \deqn{\frac{\mathrm{FUN}\{[\mathrm{fn}(x_1),\ldots,\mathrm{fn}(x_\mathrm{npop})]\} - \mathrm{fn}(x_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
-    ( FUN{ [fn(x[1]),\ldots,fn(x[npop])] } - fn(x[best]) )/fnscale <= tol,}
+  \deqn{\frac{\mathrm{compare_to}\{[\mathrm{fn}(x_1),\ldots,\mathrm{fn}(x_\mathrm{npop})]\} - \mathrm{fn}(x_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
+    ( compare_to{ [fn(x[1]),\ldots,fn(x[npop])] } - fn(x[best]) )/fnscale <= tol,}
 where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{feasible} solution with the lowest objective function value in the population and the total number of elements in the population, \code{npop}, is \code{NP+NCOL(add_to_init_pop)}.
  This is a variant of the \emph{Diff} criterion studied by Zielinski and Laur (2008), which was found to yield the best results.}
 \value{
