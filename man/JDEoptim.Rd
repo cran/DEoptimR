@@ -1,93 +1,201 @@
 \name{JDEoptim}
 \alias{JDEoptim}
-\title{Nonlinear Constrained Optimization via Differential Evolution}
+\title{Nonlinear Constrained and Unconstrained Optimization via Differential Evolution}
 \description{
-  An implementation of a bespoke jDE variant of the Differential Evolution
-  stochastic algorithm for global optimization of nonlinear programming
-  problems.
+  An bespoke implementation of the \sQuote{jDE} variant by
+  Brest \emph{et al.} (2006) \doi{10.1109/TEVC.2006.872133}.
 }
 \usage{
 JDEoptim(lower, upper, fn,
-    constr = NULL, meq = 0, eps = 1e-05,
-    NP = 10*d, Fl = 0.1, Fu = 1,
-    tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
-    jitter_factor = 0.001,
-    tol = 1e-15, maxiter = 200*d, fnscale = 1,
-    compare_to = c("median", "max"),
-    add_to_init_pop = NULL,
-    trace = FALSE, triter = 1,
-    details = FALSE, ...)
+         constr = NULL, meq = 0, eps = 1e-05,
+         NP = 10*d, Fl = 0.1, Fu = 1,
+         tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
+         jitter_factor = 0.001,
+         tol = 1e-15, maxiter = 200*d, fnscale = 1,
+         compare_to = c("median", "max"),
+         add_to_init_pop = NULL,
+         trace = FALSE, triter = 1,
+         details = FALSE, ...)
 }
 \arguments{
   \item{lower, upper}{numeric vectors of \emph{lower} or \emph{upper}
     bounds, respectively, for the parameters to be optimized over.  Must
     be finite (\code{\link{is.finite}}) as they bound the hyper rectangle
     of the initial random population.}
+
   \item{fn}{(nonlinear) objective \code{\link{function}} to be
     \emph{minimized}.  It takes as first argument the vector of
     parameters over which minimization is to take place.  It must return
     the value of the function at that point.}
+
   \item{constr}{an optional \code{\link{function}} for specifying the
     nonlinear constraints under which we want to minimize \code{fn}.
-    They should be given in the form \eqn{h_i(x) = 0, g_i(x) \le 0}.
+    Nonlinear equalities should be given first and defined to equal zero
+    (\eqn{h_j(X) = 0}), followed by nonlinear inequalities defined as
+    lesser than zero (\eqn{g_i(X) \le 0}).
     This function takes the vector of parameters as its first argument
     and returns a real vector with the length of the total number of
     constraints.  It defaults to \code{NULL}, meaning that
     \emph{bound-constrained} minimization is used.}
 
-  \item{meq}{an optional positive integer specifying that the first \code{meq} constraints are treated as \emph{equality} constraints, all the remaining as \emph{inequality} constraints. Defaults to \code{0} (inequality constraints only).}
+  \item{meq}{an optional positive integer specifying that the first
+    \code{meq} constraints are treated as \emph{equality} constraints,
+    all the remaining as \emph{inequality} constraints.  Defaults to
+    \code{0} (inequality constraints only).}
 
-  \item{eps}{maximal admissible constraint violation for equality constraints. An optional real vector of small positive tolerance values with length \code{meq} used in the transformation of equalities into inequalities of the form \eqn{|h_i(x)| - \epsilon \le 0}. A scalar value is expanded to apply to all equality constraints. Default is \code{1e-5}.}
+  \item{eps}{maximal admissible constraint violation for equality constraints.
+    An optional real vector of small positive tolerance values with length
+    \code{meq} used in the transformation of equalities into inequalities
+    of the form \eqn{|h_j(X)| - \epsilon \le 0}.  A scalar value is expanded
+    to apply to all equality constraints.  Default is \code{1e-5}.}
 
-  \item{NP}{an optional positive integer giving the number of candidate solutions in the randomly distributed initial population. Defaults to \code{10*length(lower)}.}
+  \item{NP}{an optional positive integer giving the number of candidate
+    solutions in the randomly distributed initial population.  Defaults to
+    \code{10*length(lower)}.}
 
-  \item{Fl}{an optional scalar which represents the minimum value that the \emph{scaling factor} \code{F} could take. Default is \code{0.1}, which is almost always satisfactory.}
+  \item{Fl}{an optional scalar which represents the minimum value that the
+    \emph{scaling factor} \code{F} could take.  Default is \code{0.1},
+    which is almost always satisfactory.}
 
-  \item{Fu}{an optional scalar which represents the maximum value that the \emph{scaling factor} \code{F} could take. Default is \code{1}, which is almost always satisfactory.}
+  \item{Fu}{an optional scalar which represents the maximum value that
+    the \emph{scaling factor} \code{F} could take.  Default is \code{1},
+    which is almost always satisfactory.}
 
-  \item{tau_F}{an optional scalar which represents the probability that the \emph{scaling factor} \code{F} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
+  \item{tau_F}{an optional scalar which represents the probability that
+    the \emph{scaling factor} \code{F} is updated.  Defaults to \code{0.1},
+    which is almost always satisfactory.}
 
-  \item{tau_CR}{an optional constant value which represents the probability that the \emph{crossover probability} \code{CR} is updated. Defaults to \code{0.1}, which is almost always satisfactory.}
+  \item{tau_CR}{an optional constant value which represents the probability
+    that the \emph{crossover probability} \code{CR} is updated.  Defaults to
+    \code{0.1}, which is almost always satisfactory.}
 
-  \item{tau_pF}{an optional scalar which represents the probability that the \emph{mutation probability} \eqn{p_F}{pF} in the mutation strategy DE/rand/1/either-or is updated. Defaults to \code{0.1}.}
+  \item{tau_pF}{an optional scalar which represents the probability that
+    the \emph{mutation probability} \eqn{p_F}{pF} in the mutation strategy
+    DE/rand/1/either-or is updated.  Defaults to \code{0.1}.}
 
-  \item{jitter_factor}{an optional tuning constant for \emph{jitter}. If \code{NULL} only \emph{dither} is used. Defaults to \code{0.001}.}
+  \item{jitter_factor}{an optional tuning constant for \emph{jitter}.
+    If \code{NULL} only \emph{dither} is used.  Defaults to \code{0.001}.}
 
-  \item{tol}{an optional positive scalar giving the tolerance for the stopping criterion. Default is \code{1e-15}.}
+  \item{tol}{an optional positive scalar giving the tolerance for the
+    stopping criterion.  Default is \code{1e-15}.}
 
-  \item{maxiter}{an optional positive integer specifying the maximum number of iterations that may be performed before the algorithm is halted. Defaults to \code{200*length(lower)}.}
+  \item{maxiter}{an optional positive integer specifying the maximum
+    number of iterations that may be performed before the algorithm is halted.
+    Defaults to \code{200*length(lower)}.}
 
-  \item{fnscale}{an optional positive scalar specifying the typical magnitude of \code{fn}. It is used only in the \emph{stopping criterion}. Defaults to \code{1}. See \sQuote{Details}.}
+  \item{fnscale}{an optional positive scalar specifying the typical
+    magnitude of \code{fn}.  It is used only in the \emph{stopping criterion}.
+    Defaults to \code{1}.  See \sQuote{Details}.}
 
-  \item{compare_to}{an optional character string controlling which function should be applied to the \code{fn} values of the candidate solutions in a generation to be compared with the so-far best one when evaluating the \emph{stopping criterion}. If \dQuote{\code{median}} the \code{median} function is used; else, if \dQuote{\code{max}} the \code{max} function is used. It defaults to \dQuote{\code{median}}. See \sQuote{Details}.}
+  \item{compare_to}{an optional character string controlling which function
+    should be applied to the \code{fn} values of the candidate solutions
+    in a generation to be compared with the so-far best one when evaluating
+    the \emph{stopping criterion}.  If \dQuote{\code{median}} the \code{median}
+    function is used; else, if \dQuote{\code{max}} the \code{max} function
+    is used.  It defaults to \dQuote{\code{median}}.  See \sQuote{Details}.}
 
-  \item{add_to_init_pop}{an optional real vector of length \code{length(lower)} or matrix with \code{length(lower)} rows specifying initial values of the parameters to be optimized which are appended to the randomly generated initial population. It defaults to \code{NULL}.}
+  \item{add_to_init_pop}{an optional real vector of length \code{length(lower)}
+    or matrix with \code{length(lower)} rows specifying initial values of the
+    parameters to be optimized which are appended to the randomly generated
+    initial population.  It defaults to \code{NULL}.}
 
-  \item{trace}{an optional logical value indicating if a trace of the iteration progress should be printed. Default is \code{FALSE}.}
+  \item{trace}{an optional logical value indicating if a trace of the
+    iteration progress should be printed.  Default is \code{FALSE}.}
 
-  \item{triter}{an optional positive integer that controls the frequency of tracing when \code{trace = TRUE}. Default is \code{triter = 1}, which means that \code{iteration : < value of stopping test > ( value of best solution ) best solution { index of violated constraints }} is printed at every iteration.}
+  \item{triter}{an optional positive integer that controls the frequency
+    of tracing when \code{trace = TRUE}.  Default is \code{triter = 1},
+    which means that \code{iteration : < value of stopping test >
+    ( value of best solution ) best solution { index of violated constraints }}
+    is printed at every iteration.}
 
-  \item{details}{an optional logical value. If \code{TRUE} the output will contain the parameters in the final population and their respective \code{fn} values. Defaults to \code{FALSE}.}
+  \item{details}{an optional logical value.  If \code{TRUE} the output
+    will contain the parameters in the final population and their
+    respective \code{fn} values.  Defaults to \code{FALSE}.}
 
   \item{...}{optional additional arguments passed to \code{fn()}
-  \emph{and} \code{constr()} if that is not \code{NULL}.}
+    \emph{and} \code{constr()} if that is not \code{NULL}.}
 }
 \details{
-  The setting of the \emph{control parameters} of standard Differential Evolution (DE) is crucial for the algorithm's performance. Unfortunately, when the generally recommended values for these parameters (see, \emph{e.g.}, Storn and Price, 1997) are unsuitable for use, their determination is often difficult and time consuming. The jDE algorithm proposed in Brest \emph{et al.} (2006) employs a simple self-adaptive scheme to perform the automatic setting of control parameters scale factor \code{F} and crossover rate \code{CR}.
+  \describe{
+    \item{Overview:}{
+      The setting of the \emph{control parameters} of standard
+      Differential Evolution (DE) is crucial for the algorithm's performance.
+      Unfortunately, when the generally recommended values for these parameters
+      (see, \emph{e.g.}, Storn and Price, 1997) are unsuitable for use,
+      their determination is often difficult and time consuming.
+      The jDE algorithm proposed in Brest \emph{et al.} (2006) employs a simple
+      self-adaptive scheme to perform the automatic setting of
+      control parameters scale factor \code{F} and crossover rate \code{CR}.
 
-  This implementation differs from the original description, most notably in the use of the \emph{DE/rand/1/either-or} mutation strategy (Price \emph{et al.}, 2005), combination of \emph{jitter with dither} (Storn 2008), and its use of only a \emph{single population} (Babu and Angira 2006) instead of separate current and child populations as in classical DE.
+      This implementation differs from the original description, most notably
+      in the use of the \emph{DE/rand/1/either-or} mutation strategy
+      (Price \emph{et al.}, 2005), combination of \emph{jitter with dither}
+      (Storn 2008), and for \emph{immediately replacing} each worse parent
+      in the current population by its newly generated better or equal offspring
+      (Babu and Angira 2006) instead of updating the current population with
+      all the new solutions at the same time as in classical DE.
+    }
+    \item{Constraint Handling:}{
+      Constraint handling is done using the approach described in
+      Zhang and Rangaiah (2012), but with a \emph{different reduction
+      updating scheme} for the constraint relaxation value (\eqn{\mu}).
+      Instead of doing it once for every generation or iteration,
+      the reduction is triggered for two cases when the \emph{constraints only
+      contain inequalities}.  Firstly, every time a feasible solution
+      is selected for replacement in the next generation by a new feasible
+      trial candidate solution with a better objective function value.
+      Secondly, whenever a current infeasible solution gets replaced by a
+      feasible one.  If the constraints \emph{include equalities}, then the
+      reduction is not triggered in this last case.  This constitutes an
+      original feature of the implementation.
 
-  Constraint handling is done using the approach described in Zhang and Rangaiah (2012), but with a \emph{different reduction updating scheme} for the constraint relaxation value (\eqn{\mu}). Instead of doing it once for every generation or iteration, the reduction is triggered for two cases when the \emph{constraints only contain inequalities}. Firstly, every time a feasible solution is selected for replacement in the next generation by a new feasible trial candidate solution with a better objective function value. Secondly, whenever a current infeasible solution gets replaced by a feasible one. If the constraints \emph{include equalities}, then the reduction is not triggered in this last case. This constitutes an original feature of the implementation.
+      The performance of the constraint handling technique is severely
+      impaired by a small feasible region.  Therefore, equality constraints
+      are particularly difficult to handle due to the tiny feasible region
+      they define.  So, instead of explicitly including all
+      equality constraints in the formulation of the optimization problem,
+      it might prove advantageous to eliminate some of them.
+      This is done by expressing one variable \eqn{x_k} in terms of the
+      remaining others for an equality constraint \eqn{h_j(X) = 0}
+      where \eqn{X = [x_1,\ldots,x_k,\ldots,x_d]} is the vector of solutions,
+      thereby obtaining a relationship as
+      \eqn{x_k = R_{k,j}([x_1,\ldots,x_{k-1},x_{k+1},\ldots,x_d])}.
+      But this means that both the variable \eqn{x_k} and the
+      equality constraint \eqn{h_j(X) = 0} can be removed altogether from the
+      original optimization formulation, since the value of \eqn{x_k} can be
+      calculated during the search process by the relationship \eqn{R_{k,j}}.
+      Notice, however, that two additional inequalities
+        \deqn{l_k \le R_{k,j}([x_1,\ldots,x_{k-1},x_{k+1},\ldots,x_d]) \le u_k,}
+      where the values \eqn{l_k} and \eqn{u_k} are the lower and upper bounds
+      of \eqn{x_k}, respectively, must be provided in order to obtain an
+      equivalent formulation of the problem.  For guidance and examples on
+      applying this approach see Wu \emph{et al.} (2015).
+    }
+    \item{Discrete and Integer Variables:}{
+      Any DE variant is easily extended to deal with \emph{mixed integer
+      nonlinear programming} problems using a small variation of the technique
+      presented by Lampinen and Zelinka (1999).  Integer values are obtained by
+      means of the \code{floor()} function \emph{only} for the evaluation
+      of the objective function.  This is because DE itself works with
+      continuous variables.  Additionally, each upper bound of the integer
+      variables should be added by \code{1}.
 
-  Any DE variant is easily extended to deal with \emph{mixed integer nonlinear programming} problems using a small variation of the technique presented by Lampinen and Zelinka (1999). Integer values are obtained by means of the \code{floor()} function \emph{only} for the evaluation of the objective function. This is because DE itself works with continuous variables. Additionally, each upper bound of the integer variables should be added by \code{1}.
-
-  Notice that the final solution needs to be \emph{converted with \code{floor()}} to obtain its \emph{integer} elements.
-
-  The algorithm is stopped if
-  \deqn{\frac{\mathrm{compare_to}\{[\mathrm{fn}(x_1),\ldots,\mathrm{fn}(x_\mathrm{npop})]\} - \mathrm{fn}(x_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
-    ( compare_to{ [fn(x[1]),\ldots,fn(x[npop])] } - fn(x[best]) )/fnscale <= tol,}
-where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{feasible} solution with the lowest objective function value in the population and the total number of elements in the population, \code{npop}, is \code{NP+NCOL(add_to_init_pop)}.
- This is a variant of the \emph{Diff} criterion studied by Zielinski and Laur (2008), which was found to yield the best results.}
+      Notice that the final solution needs to be \emph{converted with
+      \code{floor()}} to obtain its \emph{integer} elements.
+    }
+    \item{Stopping Criterion:}{
+      The algorithm is stopped if
+        \deqn{\frac{\mathrm{compare\_to}\{[\mathrm{fn}(X_1),\ldots,\mathrm{fn}(X_\mathrm{npop})]\} - \mathrm{fn}(X_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
+      ( compare_to{ [fn(X_1),\ldots,fn(X_npop)] } - fn(X_best) )/fnscale <= tol,}
+      where the \dQuote{best} individual \eqn{X_\mathrm{best}}{X_best} is the
+      \emph{feasible} solution with the lowest objective function value in the
+      population and the total number of elements in the population,
+      \code{npop}, is \code{NP+NCOL(add_to_init_pop)}.  This is a variant of
+      the \emph{Diff} criterion studied by Zielinski and Laur (2008), which
+      was found to yield the best results.
+    }
+  }
+}
 \value{
   A list with the following components:
   \item{par}{The best set of parameters found.}
@@ -96,14 +204,20 @@ where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{f
 
   \item{iter}{Number of iterations taken by the algorithm.}
 
-  \item{convergence}{An integer code. \code{0} indicates successful completion. \code{1} indicates that the iteration limit \code{maxiter} has been reached.}
+  \item{convergence}{An integer code.  \code{0} indicates successful completion.
+    \code{1} indicates that the iteration limit \code{maxiter}
+    has been reached.}
   and if \code{details = TRUE}:
-  \item{poppar}{Matrix of dimension \code{(length(lower), npop)}, with columns corresponding to the parameter vectors remaining in the population.}
+  \item{poppar}{Matrix of dimension \code{(length(lower), npop)}, with columns
+    corresponding to the parameter vectors remaining in the population.}
 
-  \item{popcost}{The values of \code{fn} associated with \code{poppar}, vector of length \code{npop}.}
+  \item{popcost}{The values of \code{fn} associated with \code{poppar},
+    vector of length \code{npop}.}
 }
 \note{
-  It is possible to perform a warm start, \emph{i.e.}, starting from the previous run and resume optimization, using \code{NP = 0} and the component \code{poppar} for the \code{add_to_init_pop} argument.
+  It is possible to perform a warm start, \emph{i.e.}, starting from the
+  previous run and resume optimization, using \code{NP = 0} and the
+  component \code{poppar} for the \code{add_to_init_pop} argument.
 }
 \author{
   Eduardo L. T. Conceicao \email{mail@eduardoconceicao.org}
@@ -139,6 +253,11 @@ where the \dQuote{best} individual \eqn{x_\mathrm{best}}{x[best]} is the \emph{f
   Differential evolution - a simple and efficient heuristic for global
   optimization over continuous spaces.
   \emph{Journal of Global Optimization} \bold{11}, 341--359.
+
+  Wu, G., Pedrycz, W., Suganthan, P. N. and Mallipeddi, R. (2015)
+  A variable reduction strategy for evolutionary algorithms handling
+  equality constraints.
+  \emph{Applied Soft Computing} \bold{37}, 774--786.
 
   Zhang, H. and Rangaiah, G. P. (2012)
   An efficient constraint handling method with integrated differential
