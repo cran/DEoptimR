@@ -130,10 +130,17 @@ JDEoptim(lower, upper, fn,
       This implementation differs from the original description, most notably
       in the use of the \emph{DE/rand/1/either-or} mutation strategy
       (Price \emph{et al.}, 2005), combination of \emph{jitter with dither}
-      (Storn 2008), and for \emph{immediately replacing} each worse parent
+      (Storn, 2008), and for \emph{immediately replacing} each worse parent
       in the current population by its newly generated better or equal offspring
-      (Babu and Angira 2006) instead of updating the current population with
+      (Babu and Angira, 2006) instead of updating the current population with
       all the new solutions at the same time as in classical DE.
+
+      As the algorithm subsamples via \code{\link{sample}()}
+      which from \R version 3.6.0 depends on \code{\link{RNGkind}(*,
+      sample.kind)}, exact reproducibility of results from \R versions
+      3.5.3 and earlier requires setting \code{\link{RNGversion}("3.5.0")}.
+      In any case, do use \code{\link{set.seed}()} additionally for reproducibility!
+
     }
     \item{Constraint Handling:}{
       Constraint handling is done using the approach described in
@@ -273,7 +280,7 @@ JDEoptim(lower, upper, fn,
 }
 \seealso{
   Function \code{\link[DEoptim]{DEoptim}()} in the
-  \pkg{DEoptim} package has many more options than
+  \CRANpkg{DEoptim} package has many more options than
   \code{JDEoptim()}, but does not allow constraints in the same
   flexible manner.
 }
