@@ -86,7 +86,6 @@ JDEoptim <-
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
 
-    # Initialization:
     child <- if (is.null(constr)) {
         expression({
             ftrial <- fn1(trial) # Evaluate trial with your function
@@ -202,6 +201,8 @@ JDEoptim <-
     conv <- expression(
       ( do.call(compare_to, list(fpop)) - fpop[x.best.ind] )/fnscale
     )
+
+    # Initialization
     pop <- matrix(runif(NP*d, lower, upper), nrow = d)
     if (!is.null(add_to_init_pop)) {
         pop <- unname(cbind(pop, add_to_init_pop))
@@ -232,7 +233,7 @@ JDEoptim <-
     convergence <- 0
     iteration <- 0
 
-    while (eval(rule)) { # generation loop
+    while (eval(rule)) { # Generation loop
         if (iteration >= maxiter) {
             warning("maximum number of iterations reached without convergence")
             convergence <- 1

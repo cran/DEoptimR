@@ -1,8 +1,8 @@
-8e25301731f6258c0c7bdd174e436699 *DESCRIPTION
+ae77dea53c537c4c4ab9e0eca49f36c3 *DESCRIPTION
 e957909d8b7160ad012b9ffd6d073b10 *NAMESPACE
-135be8835a40cfeab6e57579ee671d89 *R/JDEoptim.R
-6a19a48b517dc6ab51d8f5f1fa5f65e2 *build/partial.rdb
+b4099ac6c05c533176cbd96a6e9dbc16 *R/JDEoptim.R
+23437d66dae5d0c873bc0334f23f2e1a *build/partial.rdb
 849572cd1a881420ddf27c46d8ce59c2 *inst/NEWS.Rd
-b4a11b18bccefaffdfe2874c61b951a3 *inst/xtraR/opt-test-funs.R
+ef85b170b61cbc1edd40e2c2685dc984 *inst/xtraR/opt-test-funs.R
 303fc737c16ec88f8752b6d43bafa4b9 *man/JDEoptim.Rd
-5daa4617c3caed9a2354487ec6079026 *tests/JDEoptim-tst.R
+ea4cd71613ecca5dc246ea19bd3b3e38 *tests/JDEoptim-tst.R

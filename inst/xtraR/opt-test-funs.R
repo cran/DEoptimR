@@ -1,15 +1,15 @@
 swf <- function(x) {
-##   Schwefel problem
-##
-##   -500 <= xi <= 500, i = {1, 2, ..., n}
-##   The number of local minima for a given n is not known, but the global minimum
-##   f(x*) = -418.9829n is located at x* = (s, s, ..., s), s = 420.97.
-##
-##   Source:
-##     Ali, M. Montaz, Khompatraporn, Charoenchai, and Zabinsky, Zelda B. (2005).
-##     A numerical evaluation of several stochastic algorithms on selected
-##     continuous global optimization test problems.
-##     Journal of Global Optimization 31, 635-672.
+    ##   Schwefel problem
+    ##
+    ##   -500 <= xi <= 500, i = {1, 2, ..., n}
+    ##   The number of local minima for a given n is not known, but the global
+    ##   minimum f(x*) = -418.9829n is located at x* = (s, s, ..., s), s = 420.97.
+    ##
+    ##   Source:
+    ##     Ali, M. Montaz, Khompatraporn, Charoenchai, and Zabinsky, Zelda B. (2005).
+    ##     A numerical evaluation of several stochastic algorithms on selected
+    ##     continuous global optimization test problems.
+    ##     Journal of Global Optimization 31, 635-672.
 
     -crossprod( x, sin(sqrt(abs(x))) )
 }
@@ -30,6 +30,23 @@ sf1 <- function(x) {
     temp <- x[1]^2 + x[2]^2
     0.5 + (sin(sqrt(temp))^2 - 0.5)/(1 + 0.001*temp)^2
 }
+
+g11 <-
+    list(obj = function(x) {
+        ##   -1 <= xi <= 1 (i = 1, 2)
+        ##   The optimal solution is x* = (+-1/sqrt(2), 1/2)
+        ##   and the optimal value f(x*) = 0.75.
+        ##
+        ##   Source:
+        ##     Runarsson, Thomas P., and Yao, Xin (2000).
+        ##     Stochastic ranking for constrained evolutionary optimization.
+        ##     IEEE Transactions on Evolutionary Computation 4, 284-294.
+
+        x[1]^2 + (x[2] - 1)^2
+    },
+         eq = 1,
+         con = function(x) x[2] - x[1]^2
+         )
 
 RND <-
     list(obj = function(x) {
@@ -75,7 +92,7 @@ HEND <-
     },
          con = function(x) {
              x1 <- x[1]; x2 <- x[2]; x3 <- x[3]; x4 <- x[4]; x5 <- x[5]
-             c(100*x1 - x1*(400 -x4) + 833.33252*x4 -83333.333,
+             c(100*x1 - x1*(400 - x4) + 833.33252*x4 - 83333.333,
                x2*x4 - x2*(400 - x5 + x4) - 1250*x4 + 1250*x5,
                x3*x5 - x3*(100 + x5) - 2500*x5 + 1250000)
          })
@@ -105,16 +122,16 @@ alkylation <-
         ##     Computers and Chemical Engineering 30, 989-1002.
 
         x1 <- x[1]; x3 <- x[3]
-        1.715*x1 + 0.035*x1*x[6] + 4.0565*x3 +10.0*x[2] - 0.063*x3*x[5]
+        1.715*x1 + 0.035*x1*x[6] + 4.0565*x3 + 10.0*x[2] - 0.063*x3*x[5]
     },
          con = function(x) {
              x1 <- x[1]; x2 <- x[2]; x3 <- x[3]; x4 <- x[4]
              x5 <- x[5]; x6 <- x[6]; x7 <- x[7]
              c(0.0059553571*x6^2*x1 + 0.88392857*x3 - 0.1175625*x6*x1 - x1,
                1.1088*x1 + 0.1303533*x1*x6 - 0.0066033*x1*x6^2 - x3,
-               6.66173269*x6^2 + 172.39878*x5 -56.596669*x4 - 191.20592*x6 - 10000,
+               6.66173269*x6^2 + 172.39878*x5 - 56.596669*x4 - 191.20592*x6 - 10000,
                1.08702*x6 + 0.32175*x4 - 0.03762*x6^2 - x5 + 56.85075,
-               0.006198*x7*x4*x3 + 2462.3121*x2 -25.125634*x2*x4 - x3*x4,
+               0.006198*x7*x4*x3 + 2462.3121*x2 - 25.125634*x2*x4 - x3*x4,
                161.18996*x3*x4 + 5000.0*x2*x4 - 489510.0*x2 - x3*x4*x7,
                0.33*x7 - x5 + 44.333333,
                0.022556*x5 - 0.007595*x7 - 1.0,
