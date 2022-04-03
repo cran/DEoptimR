@@ -129,17 +129,22 @@ JDEoptim(lower, upper, fn,
 
       This implementation differs from the original description, most notably
       in the use of the \emph{DE/rand/1/either-or} mutation strategy
-      (Price \emph{et al.}, 2005), combination of \emph{jitter with dither}
-      (Storn, 2008), and for \emph{immediately replacing} each worse parent
-      in the current population by its newly generated better or equal offspring
+      (Price \emph{et al.}, 2005), and combination of \emph{jitter with dither}
+      (Storn, 2008).
+
+      As done by jDE and its variants (Brest \emph{et al.}, 2021) each worse
+      parent in the current population is \emph{immediately replaced}
+      (asynchronous update) by its newly generated better or equal offspring
       (Babu and Angira, 2006) instead of updating the current population with
-      all the new solutions at the same time as in classical DE.
+      all the new solutions at the same time as in classical DE
+      (synchronous update).
 
       As the algorithm subsamples via \code{\link{sample}()}
       which from \R version 3.6.0 depends on \code{\link{RNGkind}(*,
       sample.kind)}, exact reproducibility of results from \R versions
       3.5.3 and earlier requires setting \code{\link{RNGversion}("3.5.0")}.
-      In any case, do use \code{\link{set.seed}()} additionally for reproducibility!
+      In any case, do use \code{\link{set.seed}()} additionally for
+      reproducibility!
 
     }
     \item{Constraint Handling:}{
@@ -239,6 +244,12 @@ JDEoptim(lower, upper, fn,
   Self-adapting control parameters in differential evolution: a
   comparative study on numerical benchmark problems.
   \emph{IEEE Transactions on Evolutionary Computation} \bold{10}, 646--657.
+
+  Brest, J., Maucec, M. S. and Boskovic, B. (2021)
+  Self-adaptive differential evolution algorithm with population size reduction
+  for single objective bound-constrained optimization: algorithm j21;
+  in \emph{2021 IEEE Congress on Evolutionary Computation (CEC)}.
+  IEEE, pp. 817--824.
 
   Lampinen, J. and Zelinka, I. (1999).
   Mechanical engineering design optimization by differential evolution;
