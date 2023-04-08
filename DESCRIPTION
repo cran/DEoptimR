@@ -1,6 +1,6 @@
 Package: DEoptimR
-Version: 1.0-11
-Date: 2022-04-03
+Version: 1.0-12
+Date: 2023-04-08
 Title: Differential Evolution Optimization in Pure R
 Authors@R: c(
     person(c("Eduardo", "L. T."), "Conceicao",
@@ -27,8 +27,8 @@ Author: Eduardo L. T. Conceicao [aut, cre],
 Maintainer: Eduardo L. T. Conceicao <mail@eduardoconceicao.org>
 Repository: CRAN
 Repository/R-Forge/Project: robustbase
-Repository/R-Forge/Revision: 896
-Repository/R-Forge/DateTimeStamp: 2022-04-03 19:51:52
-Date/Publication: 2022-04-03 20:40:01 UTC
+Repository/R-Forge/Revision: 904
+Repository/R-Forge/DateTimeStamp: 2023-04-08 20:26:09
+Date/Publication: 2023-04-08 21:50:02 UTC
 NeedsCompilation: no
-Packaged: 2022-04-03 20:11:09 UTC; rforge
+Packaged: 2023-04-08 20:29:06 UTC; rforge

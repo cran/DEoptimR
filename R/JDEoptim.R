@@ -56,10 +56,9 @@ JDEoptim <-
     d <- length(lower)
     if (length(upper) != d)
         stop("'lower' must have same length as 'upper'")
-    stopifnot(is.numeric(lower), is.numeric(upper),
-	      is.finite(lower), is.finite(upper), lower <= upper,
-	      length(fnscale) == 1, is.finite(fnscale), fnscale > 0,
-	      is.function(fn))
+    stopifnot(is.numeric(lower), is.finite(lower),
+              is.numeric(upper), is.finite(upper), lower <= upper,
+              is.function(fn))
     if (!is.null(constr)) {
         stopifnot(is.function(constr))
         stopifnot(length(meq) == 1, meq == as.integer(meq), meq >= 0,
@@ -70,21 +69,24 @@ JDEoptim <-
             stop("eps must be either of length meq, or length 1")
     }
     stopifnot(length(NP) == 1, NP == as.integer(NP),
-	      length(Fl) == 1, is.numeric(Fl),
-	      length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
+              length(Fl) == 1, is.numeric(Fl),
+              length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
     stopifnot(length(tau_F) == 1, is.numeric(tau_F), 0 <= tau_F, tau_F <= 1,
-	      length(tau_CR) == 1, is.numeric(tau_CR), 0 <= tau_CR, tau_CR <= 1,
-	      length(tau_pF) == 1, is.numeric(tau_pF), 0 <= tau_pF, tau_pF <= 1)
+              length(tau_CR) == 1, is.numeric(tau_CR), 0 <= tau_CR, tau_CR <= 1,
+              length(tau_pF) == 1, is.numeric(tau_pF), 0 <= tau_pF, tau_pF <= 1)
     if (!is.null(jitter_factor))
         stopifnot(length(jitter_factor) == 1, is.numeric(jitter_factor))
     stopifnot(length(tol) == 1, is.numeric(tol),
               length(maxiter) == 1, maxiter == as.integer(maxiter),
-              length(triter) == 1, triter == as.integer(triter))
+              length(fnscale) == 1, is.finite(fnscale), fnscale > 0)
     if (!is.null(add_to_init_pop))
         stopifnot(NROW(add_to_init_pop) == d,
                   is.numeric(add_to_init_pop),
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
+    stopifnot(length(trace) == 1, is.logical(trace),
+              length(triter) == 1, triter == as.integer(triter),
+              length(details) == 1, is.logical(details))
 
     child <- if (is.null(constr)) {
         expression({
