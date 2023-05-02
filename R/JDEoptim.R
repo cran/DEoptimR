@@ -60,8 +60,8 @@ JDEoptim <-
               is.numeric(upper), is.finite(upper), lower <= upper,
               is.function(fn))
     if (!is.null(constr)) {
-        stopifnot(is.function(constr))
-        stopifnot(length(meq) == 1, meq == as.integer(meq), meq >= 0,
+        stopifnot(is.function(constr),
+                  length(meq) == 1, meq == as.integer(meq), meq >= 0,
                   is.numeric(eps), is.finite(eps), eps > 0)
         if (length(eps) == 1)
             eps <- rep.int(eps, meq)

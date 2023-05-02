@@ -145,7 +145,6 @@ JDEoptim(lower, upper, fn,
       3.5.3 and earlier requires setting \code{\link{RNGversion}("3.5.0")}.
       In any case, do use \code{\link{set.seed}()} additionally for
       reproducibility!
-
     }
     \item{Constraint Handling:}{
       Constraint handling is done using the approach described in
@@ -239,17 +238,20 @@ JDEoptim(lower, upper, fn,
   Modified differential evolution (MDE) for optimization of
   non-linear chemical processes.
   \emph{Computers and Chemical Engineering} \bold{30}, 989--1002.
+  \doi{10.1016/j.compchemeng.2005.12.020}.
 
   Brest, J., Greiner, S., Boskovic, B., Mernik, M. and Zumer, V. (2006)
   Self-adapting control parameters in differential evolution: a
   comparative study on numerical benchmark problems.
   \emph{IEEE Transactions on Evolutionary Computation} \bold{10}, 646--657.
+  \doi{10.1109/TEVC.2006.872133}.
 
   Brest, J., Maucec, M. S. and Boskovic, B. (2021)
   Self-adaptive differential evolution algorithm with population size reduction
   for single objective bound-constrained optimization: algorithm j21;
   in \emph{2021 IEEE Congress on Evolutionary Computation (CEC)}.
   IEEE, pp. 817--824.
+  \doi{10.1109/CEC45853.2021.9504782}.
 
   Lampinen, J. and Zelinka, I. (1999).
   Mechanical engineering design optimization by differential evolution;
@@ -259,35 +261,41 @@ JDEoptim(lower, upper, fn,
 
   Price, K. V., Storn, R. M. and Lampinen, J. A. (2005)
   \emph{Differential Evolution: A practical approach to global optimization}.
-  Springer, Berlin, pp. 117--118.
+  Springer, Berlin, Heidelberg, pp. 117--118.
+  \doi{10.1007/3-540-31306-0_2}.
 
   Storn, R. (2008)
   Differential evolution research --- trends and open questions;
   in Chakraborty, U. K., Ed.,
   \emph{Advances in differential evolution}.
-  SCI 143, Springer-Verlag, Berlin, pp. 11--12.
+  SCI 143, Springer, Berlin, Heidelberg, pp. 11--12.
+  \doi{10.1007/978-3-540-68830-3_1}.
 
   Storn, R. and Price, K. (1997)
   Differential evolution - a simple and efficient heuristic for global
   optimization over continuous spaces.
   \emph{Journal of Global Optimization} \bold{11}, 341--359.
+  \doi{10.1023/A:1008202821328}.
 
   Wu, G., Pedrycz, W., Suganthan, P. N. and Mallipeddi, R. (2015)
   A variable reduction strategy for evolutionary algorithms handling
   equality constraints.
   \emph{Applied Soft Computing} \bold{37}, 774--786.
+  \doi{10.1016/j.asoc.2015.09.007}.
 
   Zhang, H. and Rangaiah, G. P. (2012)
   An efficient constraint handling method with integrated differential
   evolution for numerical and engineering optimization.
   \emph{Computers and Chemical Engineering} \bold{37}, 74--88.
+  \doi{10.1016/j.compchemeng.2011.09.018}.
 
   Zielinski, K. and Laur, R. (2008)
   Stopping criteria for differential evolution in constrained
   single-objective optimization;
   in Chakraborty, U. K., Ed.,
   \emph{Advances in differential evolution}.
-  SCI 143, Springer-Verlag, Berlin, pp. 111--138.
+  SCI 143, Springer, Berlin, Heidelberg, pp. 111--138.
+  \doi{10.1007/978-3-540-68830-3_4}.
 }
 \seealso{
   Function \code{\link[DEoptim]{DEoptim}()} in the
@@ -319,6 +327,7 @@ set.seed(1234)
 #     A numerical evaluation of several stochastic algorithms
 #     on selected continuous global optimization test problems.
 #     Journal of Global Optimization 31, 635-672.
+#     https://doi.org/10.1007/s10898-004-9972-2
 griewank <- function(x) {
     1 + crossprod(x)/4000 - prod( cos(x/sqrt(seq_along(x))) )
 }
@@ -337,6 +346,7 @@ JDEoptim(rep(-600, 10), rep(600, 10), griewank,
 #     Assuring a global optimum by the use of an upper bound
 #     on the lower (dual) bound.
 #     Computers and Chemical Engineering 2, 83-92.
+#     https://doi.org/10.1016/0098-1354(78)80012-X
 fcn <-
     list(obj = function(x) {
              35*x[1]^0.6 + 35*x[2]^0.6
