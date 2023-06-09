@@ -1,24 +1,23 @@
-JDEoptim <-
-    function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
-             NP = 10*d, Fl = 0.1, Fu = 1,
-             tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
-             jitter_factor = 0.001,
-             tol = 1e-15, maxiter = 200*d, fnscale = 1,
-             compare_to = c("median", "max"),
-             add_to_init_pop = NULL,
-             trace = FALSE, triter = 1,
-             details = FALSE, ...)
+JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
+                     NP = 10*d, Fl = 0.1, Fu = 1,
+                     tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
+                     jitter_factor = 0.001,
+                     tol = 1e-15, maxiter = 200*d, fnscale = 1,
+                     compare_to = c("median", "max"),
+                     add_to_init_pop = NULL,
+                     trace = FALSE, triter = 1,
+                     details = FALSE, ...)
 
 #   Copyright 2013, 2014, 2016, Eduardo L. T. Conceicao
 #   Available under the GPL (>= 2)
 
 {
     handle.bounds <- function(x, u) {
-    # Check feasibility of bounds and enforce parameters limits
-    # by a deterministic variant of bounce-back resetting
-    # Price, KV, Storn, RM, and Lampinen, JA (2005)
-    # Differential Evolution: A Practical Approach to Global Optimization.
-    # Springer, p 206
+        # Check feasibility of bounds and enforce parameters limits
+        # by a deterministic variant of bounce-back resetting
+        # Price, KV, Storn, RM, and Lampinen, JA (2005)
+        # Differential Evolution: A Practical Approach to Global Optimization.
+        # Springer, p 206
         bad <- x > upper
         x[bad] <- 0.5*(upper[bad] + u[bad])
         bad <- x < lower
@@ -26,7 +25,7 @@ JDEoptim <-
         x
     }
 
-    performReproduction <- function() {
+    performReproduction <- function() { # Mutate/recombine
         ignore <- runif(d) > CRtrial
         if (all(ignore))                  # ensure that trial gets at least
             ignore[sample(d, 1)] <- FALSE # one mutant parameter
@@ -39,17 +38,16 @@ JDEoptim <-
         trial
     }
 
-    which.best <-
-        if (!is.null(constr))
-            function(x) {
-                ind <- TAVpop <= mu
-                if (all(ind))
-                    which.min(x)
-                else if (any(ind))
-                    which(ind)[which.min(x[ind])]
-                else which.min(TAVpop)
-            }
-        else which.min
+    which.best <- if (!is.null(constr))
+        function(x) {
+            ind <- TAVpop <= mu
+            if (all(ind))
+                which.min(x)
+            else if (any(ind))
+                which(ind)[which.min(x[ind])]
+            else which.min(TAVpop)
+        }
+    else which.min
 
     # Check input parameters
     compare_to <- match.arg(compare_to)
@@ -68,7 +66,7 @@ JDEoptim <-
         else if (length(eps) != meq)
             stop("eps must be either of length meq, or length 1")
     }
-    stopifnot(length(NP) == 1, NP == as.integer(NP),
+    stopifnot(length(NP) == 1, NP == as.integer(NP), NP >= 0,
               length(Fl) == 1, is.numeric(Fl),
               length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
     stopifnot(length(tau_F) == 1, is.numeric(tau_F), 0 <= tau_F, tau_F <= 1,
@@ -78,7 +76,8 @@ JDEoptim <-
         stopifnot(length(jitter_factor) == 1, is.numeric(jitter_factor))
     stopifnot(length(tol) == 1, is.numeric(tol),
               length(maxiter) == 1, maxiter == as.integer(maxiter),
-              length(fnscale) == 1, is.finite(fnscale), fnscale > 0)
+              length(fnscale) == 1, is.numeric(fnscale),
+              is.finite(fnscale), fnscale > 0)
     if (!is.null(add_to_init_pop))
         stopifnot(NROW(add_to_init_pop) == d,
                   is.numeric(add_to_init_pop),
@@ -88,7 +87,7 @@ JDEoptim <-
               length(triter) == 1, triter == as.integer(triter),
               length(details) == 1, is.logical(details))
 
-    child <- if (is.null(constr)) {
+    child <- if (is.null(constr)) { # Evaluate/select
         expression({
             ftrial <- fn1(trial) # Evaluate trial with your function
             if (ftrial <= fpop[i]) {
