@@ -1,26 +1,29 @@
 \name{JDEoptim}
 \alias{JDEoptim}
-\title{Nonlinear Constrained and Unconstrained Optimization via Differential Evolution}
+\title{
+  Bound-Constrained and Nonlinear Constrained Single-Objective Optimization
+  via Differential Evolution
+}
 \description{
-  An bespoke implementation of the \sQuote{jDE} variant by
+  A bespoke implementation of the \sQuote{jDE} variant by
   Brest \emph{et al.} (2006) \doi{10.1109/TEVC.2006.872133}.
 }
 \usage{
 JDEoptim(lower, upper, fn,
          constr = NULL, meq = 0, eps = 1e-05,
-         NP = 10*d, Fl = 0.1, Fu = 1,
+         NP = 10*length(lower), Fl = 0.1, Fu = 1,
          tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
          jitter_factor = 0.001,
-         tol = 1e-15, maxiter = 200*d, fnscale = 1,
+         tol = 1e-15, maxiter = 200*length(lower), fnscale = 1,
          compare_to = c("median", "max"),
          add_to_init_pop = NULL,
          trace = FALSE, triter = 1,
          details = FALSE, ...)
 }
 \arguments{
-  \item{lower, upper}{numeric vectors of \emph{lower} or \emph{upper}
+  \item{lower, upper}{numeric vectors of \emph{lower} and \emph{upper}
     bounds, respectively, for the parameters to be optimized over.  Must
-    be finite (\code{\link{is.finite}}) as they bound the hyper rectangle
+    be finite (\code{\link{is.finite}}) as they bound the hyper-rectangle
     of the initial random population.}
 
   \item{fn}{(nonlinear) objective \code{\link{function}} to be
@@ -40,7 +43,7 @@ JDEoptim(lower, upper, fn,
 
   \item{meq}{an optional positive integer specifying that the first
     \code{meq} constraints are treated as \emph{equality} constraints,
-    all the remaining as \emph{inequality} constraints.  Defaults to
+    and all the remaining as \emph{inequality} constraints.  Defaults to
     \code{0} (inequality constraints only).}
 
   \item{eps}{maximal admissible constraint violation for equality constraints.
@@ -95,17 +98,17 @@ JDEoptim(lower, upper, fn,
     is used.  It defaults to \dQuote{\code{median}}.  See \sQuote{Details}.}
 
   \item{add_to_init_pop}{an optional real vector of length \code{length(lower)}
-    or matrix with \code{length(lower)} rows specifying initial values of the
-    parameters to be optimized which are appended to the randomly generated
-    initial population.  It defaults to \code{NULL}.}
+    or \code{\link{matrix}} with \code{length(lower)} rows specifying
+    initial values of the parameters to be optimized which are appended to
+    the randomly generated initial population.  It defaults to \code{NULL}.}
 
   \item{trace}{an optional logical value indicating if a trace of the
     iteration progress should be printed.  Default is \code{FALSE}.}
 
   \item{triter}{an optional positive integer that controls the frequency
     of tracing when \code{trace = TRUE}.  Default is \code{triter = 1},
-    which means that \code{iteration : < value of stopping test >
-    ( value of best solution ) best solution { index of violated constraints }}
+    which means that
+    \code{iteration : < value of stopping test > ( value of best solution ) best solution { index of violated constraints }}
     is printed at every iteration.}
 
   \item{details}{an optional logical value.  If \code{TRUE} the output
@@ -437,3 +440,6 @@ res
 c(floor(res$par[1:2]), res$par[3:4])
 }
 }
+\keyword{nonlinear}
+\keyword{optimize}
+\concept{global optimization}

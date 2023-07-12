@@ -15,7 +15,7 @@ S.time(swf. <- JDEoptim(rep(-500, 10), rep(500, 10), swf,
 # Only equality constraints ----------------------------------------------------
 S.time(g11. <- JDEoptim(-c(1, 1), c(1, 1),
                         fn = g11$obj, constr = g11$con, meq = g11$eq, eps = 1e-3,
-                        tol = 1e-7, trace = TRUE))
+                        tol = 1e-7))
 # Only inequality constraints --------------------------------------------------
 S.time(RND. <- JDEoptim(c(1e-5, 1e-5), c(16, 16), RND$obj, RND$con,
                         NP = 40, tol = 1e-7))

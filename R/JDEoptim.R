@@ -1,14 +1,14 @@
 JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
-                     NP = 10*d, Fl = 0.1, Fu = 1,
+                     NP = 10*length(lower), Fl = 0.1, Fu = 1,
                      tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
                      jitter_factor = 0.001,
-                     tol = 1e-15, maxiter = 200*d, fnscale = 1,
+                     tol = 1e-15, maxiter = 200*length(lower), fnscale = 1,
                      compare_to = c("median", "max"),
                      add_to_init_pop = NULL,
                      trace = FALSE, triter = 1,
                      details = FALSE, ...)
 
-#   Copyright 2013, 2014, 2016, Eduardo L. T. Conceicao
+#   Copyright 2013, 2014, 2016, 2023, Eduardo L. T. Conceicao
 #   Available under the GPL (>= 2)
 
 {
@@ -49,26 +49,23 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
         }
     else which.min
 
+
     # Check input parameters
     compare_to <- match.arg(compare_to)
-    d <- length(lower)
-    if (length(upper) != d)
-        stop("'lower' must have same length as 'upper'")
-    stopifnot(is.numeric(lower), is.finite(lower),
-              is.numeric(upper), is.finite(upper), lower <= upper,
+    stopifnot(length(upper) == length(lower),
+              is.numeric(lower), is.finite(lower),
+              is.numeric(upper), is.finite(upper),
+              lower <= upper,
               is.function(fn))
-    if (!is.null(constr)) {
+    if (!is.null(constr))
         stopifnot(is.function(constr),
                   length(meq) == 1, meq == as.integer(meq), meq >= 0,
-                  is.numeric(eps), is.finite(eps), eps > 0)
-        if (length(eps) == 1)
-            eps <- rep.int(eps, meq)
-        else if (length(eps) != meq)
-            stop("eps must be either of length meq, or length 1")
-    }
+                  is.numeric(eps), is.finite(eps), eps > 0,
+                  length(eps) == 1 || length(eps) == meq)
     stopifnot(length(NP) == 1, NP == as.integer(NP), NP >= 0,
               length(Fl) == 1, is.numeric(Fl),
-              length(Fu) == 1, is.numeric(Fu), Fl <= Fu)
+              length(Fu) == 1, is.numeric(Fu),
+              Fl <= Fu)
     stopifnot(length(tau_F) == 1, is.numeric(tau_F), 0 <= tau_F, tau_F <= 1,
               length(tau_CR) == 1, is.numeric(tau_CR), 0 <= tau_CR, tau_CR <= 1,
               length(tau_pF) == 1, is.numeric(tau_pF), 0 <= tau_pF, tau_pF <= 1)
@@ -79,7 +76,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
               length(fnscale) == 1, is.numeric(fnscale),
               is.finite(fnscale), fnscale > 0)
     if (!is.null(add_to_init_pop))
-        stopifnot(NROW(add_to_init_pop) == d,
+        stopifnot(NROW(add_to_init_pop) == length(lower),
                   is.numeric(add_to_init_pop),
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
@@ -89,7 +86,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
 
     child <- if (is.null(constr)) { # Evaluate/select
         expression({
-            ftrial <- fn1(trial) # Evaluate trial with your function
+            ftrial <- fn1(trial)
             if (ftrial <= fpop[i]) {
                 pop[, i] <- trial
                 fpop[i] <- ftrial
@@ -204,6 +201,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
     )
 
     # Initialization
+    d <- length(lower)
     pop <- matrix(runif(NP*d, lower, upper), nrow = d)
     if (!is.null(add_to_init_pop)) {
         pop <- unname(cbind(pop, add_to_init_pop))
@@ -216,10 +214,10 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
     CR <- runif(NP)
     pF <- runif(NP)
     fpop <- apply(pop, 2, fn1)
+    stopifnot(is.vector(fpop), !anyNA(fpop))
     if (!is.null(constr)) {
         hpop <- apply(pop, 2, constr1)
-        if ( any(is.na(hpop)) )
-            stop("value of meq is invalid")
+        stopifnot(is.matrix(hpop) || is.vector(hpop), !anyNA(hpop))
         if (is.vector(hpop)) dim(hpop) <- c(1, length(hpop))
         TAVpop <- apply( hpop, 2, function(x) sum(pmax(x, 0)) )
         mu <- median(TAVpop)

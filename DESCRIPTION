@@ -1,6 +1,6 @@
 Package: DEoptimR
-Version: 1.0-14
-Date: 2023-05-14
+Version: 1.1-0
+Date: 2023-07-10
 Title: Differential Evolution Optimization in Pure R
 Authors@R: c(
     person(c("Eduardo", "L. T."), "Conceicao",
@@ -11,14 +11,16 @@ Authors@R: c(
            email = "maechler@stat.math.ethz.ch",
            comment = c(ORCID = "0000-0002-8685-9910"))
     )
-Description: Differential Evolution (DE) stochastic algorithms for global
-    optimization of problems with and without constraints.
-    The aim is to curate a collection of its state-of-the-art variants that
+Description: Differential Evolution (DE) stochastic heuristic algorithms for
+    global optimization of problems with and without general constraints.
+    The aim is to curate a collection of its variants that
     (1) do not sacrifice simplicity of design,
     (2) are essentially tuning-free, and
     (3) can be efficiently implemented directly in the R language.
-    Currently, it only provides an implementation of the 'jDE' algorithm by
-    Brest et al. (2006) <doi:10.1109/TEVC.2006.872133>.
+    Currently, it provides implementations of the algorithms 'jDE' by
+    Brest et al. (2006) <doi:10.1109/TEVC.2006.872133> for single-objective
+    optimization and 'NCDE' by Qu et al. (2012) <doi:10.1109/TEVC.2011.2161873>
+    for multimodal optimization.
 Imports: stats
 Enhances: robustbase
 License: GPL (>= 2)
@@ -27,8 +29,8 @@ Author: Eduardo L. T. Conceicao [aut, cre],
 Maintainer: Eduardo L. T. Conceicao <mail@eduardoconceicao.org>
 Repository: CRAN
 Repository/R-Forge/Project: robustbase
-Repository/R-Forge/Revision: 909
-Repository/R-Forge/DateTimeStamp: 2023-05-14 19:19:57
-Date/Publication: 2023-06-09 19:00:03 UTC
+Repository/R-Forge/Revision: 951
+Repository/R-Forge/DateTimeStamp: 2023-07-10 19:56:11
+Date/Publication: 2023-07-12 18:30:32 UTC
 NeedsCompilation: no
-Packaged: 2023-05-14 19:25:06 UTC; rforge
+Packaged: 2023-07-10 20:05:06 UTC; rforge
