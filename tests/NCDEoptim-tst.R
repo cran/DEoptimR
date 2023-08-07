@@ -43,8 +43,8 @@ S.time(bl_ <- NCDEoptim(-c(10, 10), c(10, 10),
 #     Swarm and Evolutionary Computation 44, 74-100.
 
 S.time(F1_ <- NCDEoptim(-2, 2,
-                        \(x) x^2,
-                        \(x) 1 - x^2,
+                        function(x) x^2,
+                        function(x) 1 - x^2,
                         niche_radius = 1,
                         maxiter = 200))
 

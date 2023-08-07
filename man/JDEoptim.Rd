@@ -105,11 +105,11 @@ JDEoptim(lower, upper, fn,
   \item{trace}{an optional logical value indicating if a trace of the
     iteration progress should be printed.  Default is \code{FALSE}.}
 
-  \item{triter}{an optional positive integer that controls the frequency
-    of tracing when \code{trace = TRUE}.  Default is \code{triter = 1},
-    which means that
+  \item{triter}{an optional positive integer giving the frequency of tracing
+    (every \code{triter} iterations) when \code{trace = TRUE}.  Default is
+    \code{triter = 1}, in which case
     \code{iteration : < value of stopping test > ( value of best solution ) best solution { index of violated constraints }}
-    is printed at every iteration.}
+    is printed at each iteration.}
 
   \item{details}{an optional logical value.  If \code{TRUE} the output
     will contain the parameters in the final population and their
@@ -199,7 +199,7 @@ JDEoptim(lower, upper, fn,
     }
     \item{Stopping Criterion:}{
       The algorithm is stopped if
-        \deqn{\frac{\mathrm{compare\_to}\{[\mathrm{fn}(X_1),\ldots,\mathrm{fn}(X_\mathrm{npop})]\} - \mathrm{fn}(X_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol}}{%
+        \deqn{\frac{\mathrm{compare\_to}\{[\mathrm{fn}(X_1),\ldots,\mathrm{fn}(X_\mathrm{npop})]\} - \mathrm{fn}(X_\mathrm{best})}{\mathrm{fnscale}} \le \mathrm{tol},}{%
       ( compare_to{ [fn(X_1),\ldots,fn(X_npop)] } - fn(X_best) )/fnscale <= tol,}
       where the \dQuote{best} individual \eqn{X_\mathrm{best}}{X_best} is the
       \emph{feasible} solution with the lowest objective function value in the

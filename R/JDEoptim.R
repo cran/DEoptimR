@@ -70,18 +70,22 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
               length(tau_CR) == 1, is.numeric(tau_CR), 0 <= tau_CR, tau_CR <= 1,
               length(tau_pF) == 1, is.numeric(tau_pF), 0 <= tau_pF, tau_pF <= 1)
     if (!is.null(jitter_factor))
-        stopifnot(length(jitter_factor) == 1, is.numeric(jitter_factor))
-    stopifnot(length(tol) == 1, is.numeric(tol),
+        stopifnot(length(jitter_factor) == 1,
+                  is.numeric(jitter_factor),
+                  is.finite(jitter_factor))
+    stopifnot(length(tol) == 1, is.numeric(tol), is.finite(tol),
               length(maxiter) == 1, maxiter == as.integer(maxiter),
+              maxiter >= 0,
               length(fnscale) == 1, is.numeric(fnscale),
               is.finite(fnscale), fnscale > 0)
     if (!is.null(add_to_init_pop))
         stopifnot(NROW(add_to_init_pop) == length(lower),
                   is.numeric(add_to_init_pop),
+                  is.finite(add_to_init_pop),
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
     stopifnot(length(trace) == 1, is.logical(trace),
-              length(triter) == 1, triter == as.integer(triter),
+              length(triter) == 1, triter == as.integer(triter), triter >= 1,
               length(details) == 1, is.logical(details))
 
     child <- if (is.null(constr)) { # Evaluate/select
@@ -214,10 +218,11 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
     CR <- runif(NP)
     pF <- runif(NP)
     fpop <- apply(pop, 2, fn1)
-    stopifnot(is.vector(fpop), !anyNA(fpop))
+    stopifnot(is.vector(fpop), !anyNA(fpop), !is.nan(fpop))
     if (!is.null(constr)) {
         hpop <- apply(pop, 2, constr1)
-        stopifnot(is.matrix(hpop) || is.vector(hpop), !anyNA(hpop))
+        stopifnot(is.matrix(hpop) || is.vector(hpop),
+                  !anyNA(hpop), !is.nan(hpop))
         if (is.vector(hpop)) dim(hpop) <- c(1, length(hpop))
         TAVpop <- apply( hpop, 2, function(x) sum(pmax(x, 0)) )
         mu <- median(TAVpop)

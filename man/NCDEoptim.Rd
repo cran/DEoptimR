@@ -53,9 +53,8 @@ NCDEoptim(lower, upper, fn,
     inequalities of the form \eqn{|h_j(X_i)| - \epsilon \le 0}.  A scalar value
     is expanded to apply to all equality constraints.  Default is \code{1e-5}.}
 
-  \item{crit}{a numeric, the absolute acceptance threshold on the
-    archive strategy.  If
-    \eqn{|\mathrm{fn}(X_\mathrm{best\_so\_far\_in\_archive}) - X_i| \le \mathrm{crit}},
+  \item{crit}{a numeric, the acceptance threshold on the archive strategy.  If
+    \code{\link{isTRUE}(\link{all.equal}(fn(X_best_so_far_in_archive), fn(X_i), tolerance = crit))},
     a solution \eqn{X_i} is checked for possible insertion into the
     dynamic archive.  Defaults to \code{1e-5}.}
 
@@ -136,10 +135,11 @@ NCDEoptim(lower, upper, fn,
   instead of canonical Diferential Evolution.  The key reason for archiving
   good solutions during the search process is to prevent them from being lost
   during evolution.  Constraints are tackled through the
-  \eqn{\epsilon}-constraint method as proposed in Poole and Allen (2019).
-  The \sQuote{jDE} and \eqn{\epsilon}-constraint mechanisms are applied
-  in the same way as in \code{\link{JDEoptim}}, but with \emph{synchronous}
-  mode of population update.  In contrast, the reinitialization in the current
+  \eqn{\varepsilon}{epsilon}-constrained method as proposed
+  in Poole and Allen (2019).  The \sQuote{jDE} and
+  \eqn{\varepsilon}{epsilon}-constrained mechanisms are applied in the same way
+  as in \code{\link{JDEoptim}}, but with \emph{synchronous} mode of
+  population update.  In contrast, the reinitialization in the current
   population triggered by already found solutions is done \emph{asynchronously}.
 
   Each line of trace output follows the format of:
@@ -216,7 +216,7 @@ set.seed(1234)
 #   The function has 6^n global minima without local minima.
 
 NCDEoptim(c(0.25, 0.25), c(10, 10),
-          \(x) -mean(sin(10*log(x))),
+          function(x) -mean(sin(10*log(x))),
           niche_radius = 0.2,
           maxiter = 200, trace = TRUE, triter = 20)
 
@@ -233,7 +233,8 @@ NCDEoptim(c(0.25, 0.25), c(10, 10),
 #   (x1*, ..., x10*; f*) = ((2*(1:10) - 1)/20; 0.875).
 
 NCDEoptim(0, 1,
-          \(x) -sin(5*pi*x)^6 + 1, \(x) -cos(10*pi*x),
+          function(x) -sin(5*pi*x)^6 + 1,
+          function(x) -cos(10*pi*x),
           niche_radius = 0.05,
           maxiter = 200, trace = TRUE, triter = 20)
 }
