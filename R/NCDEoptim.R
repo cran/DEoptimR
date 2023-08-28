@@ -8,7 +8,8 @@ NCDEoptim <- function(
     tau_nbngbrs = 0.1,
     jitter_factor = 0.001,
     maxiter = 2000,
-    add_to_init_pop = NULL, trace = FALSE, triter = 1,
+    add_to_init_pop = NULL,
+    trace = FALSE, triter = 1,
     ...) {
 
 #   Copyright 2023, Eduardo L. T. Conceicao
@@ -17,6 +18,7 @@ NCDEoptim <- function(
     handle_bounds <- function(x, u) {
         # Check feasibility of bounds and enforce parameters limits
         # by a deterministic variant of bounce-back resetting
+        # (also known as midpoint target/base)
         # Price, KV, Storn, RM, and Lampinen, JA (2005)
         # Differential Evolution: A Practical Approach to Global Optimization.
         # Springer, p 206
@@ -31,10 +33,12 @@ NCDEoptim <- function(
         ignore <- runif(d) > CRtrial
         if (all(ignore))                  # ensure that trial gets at least
             ignore[sample(d, 1)] <- FALSE # one mutant parameter
+
         # Source for trial is the base vector plus weighted differential
         trial <- if (runif(1) <= pFtrial)
             X_base + Ftrial*(X_r1 - X_r2)
         else X_base + 0.5*(Ftrial + 1)*(X_r1 + X_r2 - 2*X_base)
+
         # or trial parameter comes from target vector X_i itself.
         trial[ignore] <- X_i[ignore]
         trial
@@ -51,11 +55,10 @@ NCDEoptim <- function(
         }
     else which.min
 
-
     # Check input parameters
     stopifnot(length(upper) == length(lower),
-              is.numeric(lower), is.finite(lower),
-              is.numeric(upper), is.finite(upper),
+              length(lower) > 0, is.numeric(lower), is.finite(lower),
+              length(upper) > 0, is.numeric(upper), is.finite(upper),
               lower <= upper,
               is.function(fn))
     if (!is.null(constr))
@@ -72,7 +75,8 @@ NCDEoptim <- function(
               archive_size == as.integer(archive_size),
               archive_size >= 0,
               length(reinit_if_solu_in_arch) == 1,
-              is.logical(reinit_if_solu_in_arch))
+              is.logical(reinit_if_solu_in_arch),
+              !is.na(reinit_if_solu_in_arch))
     stopifnot(length(NP) == 1, NP == as.integer(NP), NP >= 0,
               length(Fl) == 1, is.numeric(Fl),
               length(Fu) == 1, is.numeric(Fu),
@@ -98,7 +102,7 @@ NCDEoptim <- function(
                   is.finite(add_to_init_pop),
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
-    stopifnot(length(trace) == 1, is.logical(trace),
+    stopifnot(length(trace) == 1, is.logical(trace), !is.na(trace),
               length(triter) == 1, triter == as.integer(triter), triter >= 1)
 
     check_archive <- if (reinit_if_solu_in_arch) {
@@ -264,7 +268,7 @@ NCDEoptim <- function(
             TAVtrial <- sum( pmax(htrial, 0) )
             if (TAVtrial > mu) {
                 if (TAVtrial <= TAVpop[k]) { # trial and target are both
-                    pop_next[, k] <- trial   # unfeasible, the one with smaller
+                    pop_next[, k] <- trial   # infeasible, the one with smaller
                     hpop_next[, k] <- htrial # constraint violation is chosen
                     F_next[, k] <- Ftrial    # or trial vector when both are
                     CR_next[k] <- CRtrial    # solutions of equal quality
@@ -303,7 +307,7 @@ NCDEoptim <- function(
             htrial <- constr1(trial)
             TAVtrial <- sum( pmax(htrial, 0) )
             if (TAVtrial > mu) {
-                if (TAVtrial <= TAVpop[k]) { # trial and target both unfeasible
+                if (TAVtrial <= TAVpop[k]) { # trial and target both infeasible
                     pop_next[, k] <- trial
                     hpop_next[, k] <- htrial
                     F_next[, k] <- Ftrial
@@ -346,10 +350,10 @@ NCDEoptim <- function(
 
     if (!is.null(constr))
         constr1 <- if (meq > 0) {
-            equalIndex <- 1:meq
+            equal_index <- 1:meq
             function(par) {
                 h <- constr(par, ...)
-                h[equalIndex] <- abs(h[equalIndex]) - eps
+                h[equal_index] <- abs(h[equal_index]) - eps
                 h
             }
         } else function(par) constr(par, ...)
@@ -365,8 +369,13 @@ NCDEoptim <- function(
     }
     stopifnot(NP >= 4,
               length(nbngbrsl) == 1, is.numeric(nbngbrsl), nbngbrsl >= 3,
-              length(nbngbrsu) == 1, is.numeric(nbngbrsu), nbngbrsu <= NP,
+              length(nbngbrsu) == 1, is.numeric(nbngbrsu), nbngbrsu <= NP - 1,
               nbngbrsl <= nbngbrsu)
+    # Combine jitter with dither
+    # Storn, Rainer (2008).
+    # Differential evolution research - trends and open questions.
+    # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
+    # SCI 143, Springer-Verlag, pp 11-12
     F <- if (use_jitter)
         (1 + jitter_factor*runif(d, -0.5, 0.5)) %o% runif(NP, Fl, Fu)
     else matrix(runif(NP, Fl, Fu), nrow = 1)
@@ -374,7 +383,7 @@ NCDEoptim <- function(
     pF <- runif(NP)
     nbngbrs <- runif(NP, nbngbrsl, nbngbrsu)
     fpop <- apply(pop, 2, fn1)
-    stopifnot(is.vector(fpop), !anyNA(fpop), !is.nan(fpop))
+    stopifnot(is.vector(fpop), !anyNA(fpop), !is.nan(fpop), !is.logical(fpop))
     pop_next <- pop
     F_next <- F
     CR_next <- CR
@@ -384,7 +393,7 @@ NCDEoptim <- function(
     if (!is.null(constr)) {
         hpop <- apply(pop, 2, constr1)
         stopifnot(is.matrix(hpop) || is.vector(hpop),
-                  !anyNA(hpop), !is.nan(hpop))
+                  !anyNA(hpop), !is.nan(hpop), !is.logical(hpop))
         if (is.vector(hpop)) dim(hpop) <- c(1, length(hpop))
         TAVpop <- apply( hpop, 2, function(x) sum(pmax(x, 0)) )
         mu <- median(TAVpop)
@@ -405,32 +414,29 @@ NCDEoptim <- function(
         eval(identification_radius)
 
         for (i in pop_index) { # Start loop through population
+
             # Equalize the mean lifetime of all vectors
             # Price, KV, Storn, RM, and Lampinen, JA (2005)
             # Differential Evolution: A Practical Approach to
             # Global Optimization. Springer, p 284
             i <- ((iteration + i) %% NP) + 1
 
-            # Fi update
-            # Combine jitter with dither
-            # Storn, Rainer (2008).
-            # Differential evolution research - trends and open questions.
-            # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
-            # SCI 143, Springer-Verlag, pp 11-12
+            # Self-adjusting parameter control scheme
             Ftrial <- if (runif(1) <= tau_F) {
+                # Combine jitter with dither
                 if (use_jitter)
                     runif(1, Fl, Fu) * (1 + jitter_factor*runif(d, -0.5, 0.5))
                 else runif(1, Fl, Fu)
             } else F[, i]
-            # CRi update
+
             CRtrial <- if (runif(1) <= tau_CR)
                 runif(1, CRl, CRu)
             else CR[i]
-            # pFi update
+
             pFtrial <- if (runif(1) <= tau_pF)
                 runif(1)
             else pF[i]
-            # nbngbrsi update
+
             nbngbrstrial <- if (runif(1) <= tau_nbngbrs)
                 runif(1, nbngbrsl, nbngbrsu)
             else nbngbrs[i]
@@ -448,6 +454,7 @@ NCDEoptim <- function(
             X_r2 <- pop[, r[3L]]
 
             trial <- handle_bounds(perform_reproduction(), X_base)
+
             # Identify the most similar individual of the trial vector
             k <- which.min( sqrt(colSums((trial - pop)^2)) )
 

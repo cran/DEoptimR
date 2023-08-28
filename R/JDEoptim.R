@@ -15,6 +15,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
     handle.bounds <- function(x, u) {
         # Check feasibility of bounds and enforce parameters limits
         # by a deterministic variant of bounce-back resetting
+        # (also known as midpoint target/base)
         # Price, KV, Storn, RM, and Lampinen, JA (2005)
         # Differential Evolution: A Practical Approach to Global Optimization.
         # Springer, p 206
@@ -29,10 +30,12 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
         ignore <- runif(d) > CRtrial
         if (all(ignore))                  # ensure that trial gets at least
             ignore[sample(d, 1)] <- FALSE # one mutant parameter
+
         # Source for trial is the base vector plus weighted differential
         trial <- if (runif(1) <= pFtrial)
             X.base + Ftrial*(X.r1 - X.r2)
         else X.base + 0.5*(Ftrial + 1)*(X.r1 + X.r2 - 2*X.base)
+
         # or trial parameter comes from target vector X.i itself.
         trial[ignore] <- X.i[ignore]
         trial
@@ -49,12 +52,11 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
         }
     else which.min
 
-
     # Check input parameters
     compare_to <- match.arg(compare_to)
     stopifnot(length(upper) == length(lower),
-              is.numeric(lower), is.finite(lower),
-              is.numeric(upper), is.finite(upper),
+              length(lower) > 0, is.numeric(lower), is.finite(lower),
+              length(upper) > 0, is.numeric(upper), is.finite(upper),
               lower <= upper,
               is.function(fn))
     if (!is.null(constr))
@@ -84,9 +86,9 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
                   is.finite(add_to_init_pop),
                   add_to_init_pop >= lower,
                   add_to_init_pop <= upper)
-    stopifnot(length(trace) == 1, is.logical(trace),
+    stopifnot(length(trace) == 1, is.logical(trace), !is.na(trace),
               length(triter) == 1, triter == as.integer(triter), triter >= 1,
-              length(details) == 1, is.logical(details))
+              length(details) == 1, is.logical(details), !is.na(details))
 
     child <- if (is.null(constr)) { # Evaluate/select
         expression({
@@ -110,7 +112,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
             TAVtrial <- sum( pmax(htrial, 0) )
             if (TAVtrial > mu) {
                 if (TAVtrial <= TAVpop[i]) { # trial and target are both
-                    pop[, i] <- trial        # unfeasible, the one with smaller
+                    pop[, i] <- trial        # infeasible, the one with smaller
                     hpop[, i] <- htrial      # constraint violation is chosen
                     F[, i] <- Ftrial         # or trial vector when both are
                     CR[i] <- CRtrial         # solutions of equal quality
@@ -145,7 +147,7 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
             htrial <- constr1(trial)
             TAVtrial <- sum( pmax(htrial, 0) )
             if (TAVtrial > mu) {
-                if (TAVtrial <= TAVpop[i]) { # trial and target both unfeasible
+                if (TAVtrial <= TAVpop[i]) { # trial and target both infeasible
                     pop[, i] <- trial
                     hpop[, i] <- htrial
                     F[, i] <- Ftrial
@@ -212,17 +214,22 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
         NP <- ncol(pop)
     }
     stopifnot(NP >= 4)
+    # Combine jitter with dither
+    # Storn, Rainer (2008).
+    # Differential evolution research - trends and open questions.
+    # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
+    # SCI 143, Springer-Verlag, pp 11-12
     F <- if (use.jitter)
         (1 + jitter_factor*runif(d, -0.5, 0.5)) %o% runif(NP, Fl, Fu)
     else matrix(runif(NP, Fl, Fu), nrow = 1)
     CR <- runif(NP)
     pF <- runif(NP)
     fpop <- apply(pop, 2, fn1)
-    stopifnot(is.vector(fpop), !anyNA(fpop), !is.nan(fpop))
+    stopifnot(is.vector(fpop), !anyNA(fpop), !is.nan(fpop), !is.logical(fpop))
     if (!is.null(constr)) {
         hpop <- apply(pop, 2, constr1)
         stopifnot(is.matrix(hpop) || is.vector(hpop),
-                  !anyNA(hpop), !is.nan(hpop))
+                  !anyNA(hpop), !is.nan(hpop), !is.logical(hpop))
         if (is.vector(hpop)) dim(hpop) <- c(1, length(hpop))
         TAVpop <- apply( hpop, 2, function(x) sum(pmax(x, 0)) )
         mu <- median(TAVpop)
@@ -246,26 +253,22 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
         iteration <- iteration + 1
 
         for (i in popIndex) { # Start loop through population
+
             # Equalize the mean lifetime of all vectors
             # Price, KV, Storn, RM, and Lampinen, JA (2005)
             # Differential Evolution: A Practical Approach to
             # Global Optimization. Springer, p 284
             i <- ((iteration + i) %% NP) + 1
 
-            # Fi update
-            # Combine jitter with dither
-            # Storn, Rainer (2008).
-            # Differential evolution research - trends and open questions.
-            # In: U. K. Chakraborty (Ed.), Advances in Differential Evolution,
-            # SCI 143, Springer-Verlag, pp 11-12
+            # Self-adjusting parameter control scheme
             Ftrial <- if (runif(1) <= tau_F) {
+                # Combine jitter with dither
                 if (use.jitter)
                     runif(1, Fl, Fu) * (1 + jitter_factor*runif(d, -0.5, 0.5))
                 else runif(1, Fl, Fu)
             } else F[, i]
-            # CRi update
+
             CRtrial <- if (runif(1) <= tau_CR) runif(1) else CR[i]
-            # pFi update
             pFtrial <- if (runif(1) <= tau_pF) runif(1) else pF[i]
 
             # DE/rand/1/either-or/bin

@@ -25,7 +25,7 @@
 \section{Changes in DEoptimR version 1.0-0 (2014-01-27)}{
   \itemize{
     \item First release of DEoptimR: implementation of a bespoke variant
-          of the jDE algorithm.
+          of the jDE algorithm for single-objective optimization.
     \item Constraint handling based on biasing feasible over unfeasible
           solutions by a parameter-less variant of the
           \eqn{\varepsilon}{epsilon}-constrained method.

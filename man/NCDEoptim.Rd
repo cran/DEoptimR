@@ -22,7 +22,8 @@ NCDEoptim(lower, upper, fn,
           tau_nbngbrs = 0.1,
           jitter_factor = 0.001,
           maxiter = 2000,
-          add_to_init_pop = NULL, trace = FALSE, triter = 1,
+          add_to_init_pop = NULL,
+          trace = FALSE, triter = 1,
           ...)
 }
 \arguments{
@@ -34,8 +35,9 @@ NCDEoptim(lower, upper, fn,
     numeric vector \eqn{X_i} as first argument and returns the value of the
     objective.}
 
-  \item{constr}{a vector \code{\link{function}} specifying equality constraints
-    defined to equal zero (\eqn{h_j(X_i) = 0,\; j = 1,\ldots,\mathrm{meq}}),
+  \item{constr}{a vector \code{\link{function}} specifying the
+    \strong{left hand size} of equality constraints defined to equal zero
+    (\eqn{h_j(X_i) = 0,\; j = 1,\ldots,\mathrm{meq}}),
     followed by inequality constraints defined as lesser than zero
     (\eqn{g_j(X_i) \le 0,\; j = \mathrm{meq}+1,\ldots}).  This function takes
     \eqn{X_i} as its first argument and returns a numeric vector with the same

@@ -22,8 +22,8 @@ JDEoptim(lower, upper, fn,
 }
 \arguments{
   \item{lower, upper}{numeric vectors of \emph{lower} and \emph{upper}
-    bounds, respectively, for the parameters to be optimized over.  Must
-    be finite (\code{\link{is.finite}}) as they bound the hyper-rectangle
+    bounds for the parameters to be optimized over.  Must be finite
+    (\code{\link{is.finite}}) as they bound the hyper-rectangle
     of the initial random population.}
 
   \item{fn}{(nonlinear) objective \code{\link{function}} to be
@@ -32,7 +32,8 @@ JDEoptim(lower, upper, fn,
     the value of the function at that point.}
 
   \item{constr}{an optional \code{\link{function}} for specifying the
-    nonlinear constraints under which we want to minimize \code{fn}.
+    \emph{left hand size} of nonlinear constraints under which
+    we want to minimize \code{fn}.
     Nonlinear equalities should be given first and defined to equal zero
     (\eqn{h_j(X) = 0}), followed by nonlinear inequalities defined as
     lesser than zero (\eqn{g_i(X) \le 0}).
@@ -115,13 +116,13 @@ JDEoptim(lower, upper, fn,
     will contain the parameters in the final population and their
     respective \code{fn} values.  Defaults to \code{FALSE}.}
 
-  \item{...}{optional additional arguments passed to \code{fn()}
-    \emph{and} \code{constr()} if that is not \code{NULL}.}
+  \item{\dots}{optional additional arguments passed to \code{fn}
+    and \code{constr}.}
 }
 \details{
   \describe{
     \item{Overview:}{
-      The setting of the \emph{control parameters} of standard
+      The setting of the \emph{control parameters} of canonical
       Differential Evolution (DE) is crucial for the algorithm's performance.
       Unfortunately, when the generally recommended values for these parameters
       (see, \emph{e.g.}, Storn and Price, 1997) are unsuitable for use,
@@ -132,8 +133,11 @@ JDEoptim(lower, upper, fn,
 
       This implementation differs from the original description, most notably
       in the use of the \emph{DE/rand/1/either-or} mutation strategy
-      (Price \emph{et al.}, 2005), and combination of \emph{jitter with dither}
-      (Storn, 2008).
+      (Price \emph{et al.}, 2005), combination of \emph{jitter with dither}
+      (Storn, 2008), and the random initialization of \code{F} and \code{CR}.
+      The mutation operator brings an additional control parameter, the
+      mutation probability \eqn{p_F}{pF}, which is self-adapted in the
+      same manner as \code{CR}.
 
       As done by jDE and its variants (Brest \emph{et al.}, 2021) each worse
       parent in the current population is \emph{immediately replaced}
@@ -163,7 +167,7 @@ JDEoptim(lower, upper, fn,
       reduction is not triggered in this last case.  This constitutes an
       original feature of the implementation.
 
-      The performance of the constraint handling technique is severely
+      The performance of any constraint handling technique is severely
       impaired by a small feasible region.  Therefore, equality constraints
       are particularly difficult to handle due to the tiny feasible region
       they define.  So, instead of explicitly including all
@@ -184,18 +188,21 @@ JDEoptim(lower, upper, fn,
       of \eqn{x_k}, respectively, must be provided in order to obtain an
       equivalent formulation of the problem.  For guidance and examples on
       applying this approach see Wu \emph{et al.} (2015).
+
+      Bound constraints are enforced by the \emph{midpoint base} approach
+      (see, \emph{e.g.}, Biedrzycki \emph{et al.}, 2019).
     }
     \item{Discrete and Integer Variables:}{
       Any DE variant is easily extended to deal with \emph{mixed integer
       nonlinear programming} problems using a small variation of the technique
       presented by Lampinen and Zelinka (1999).  Integer values are obtained by
-      means of the \code{floor()} function \emph{only} for the evaluation
-      of the objective function.  This is because DE itself works with
+      means of the \code{floor()} function \emph{only} in the evaluation
+      of the objective function and constraints, whereas DE itself still uses
       continuous variables.  Additionally, each upper bound of the integer
       variables should be added by \code{1}.
 
-      Notice that the final solution needs to be \emph{converted with
-      \code{floor()}} to obtain its \emph{integer} elements.
+      Notice that the final solution needs to be converted with \code{floor()}
+      to obtain its \emph{integer} elements.
     }
     \item{Stopping Criterion:}{
       The algorithm is stopped if
@@ -204,9 +211,10 @@ JDEoptim(lower, upper, fn,
       where the \dQuote{best} individual \eqn{X_\mathrm{best}}{X_best} is the
       \emph{feasible} solution with the lowest objective function value in the
       population and the total number of elements in the population,
-      \code{npop}, is \code{NP+NCOL(add_to_init_pop)}.  This is a variant of
-      the \emph{Diff} criterion studied by Zielinski and Laur (2008), which
-      was found to yield the best results.
+      \code{npop}, is \code{NP+NCOL(add_to_init_pop)}.
+      For \code{compare_to = "max"} this is the \emph{Diff} criterion
+      studied by Zielinski and Laur (2008) among several other alternatives,
+      which was found to yield the best results.
     }
   }
 }
@@ -242,6 +250,11 @@ JDEoptim(lower, upper, fn,
   non-linear chemical processes.
   \emph{Computers and Chemical Engineering} \bold{30}, 989--1002.
   \doi{10.1016/j.compchemeng.2005.12.020}.
+
+  Biedrzycki, R., Arabas, J. and Jagodzinski, D. (2019)
+  Bound constraints handling in Differential Evolution: An experimental study.
+  \emph{Swarm and Evolutionary Computation} \bold{50}, 100453.
+  \doi{10.1016/j.swevo.2018.10.004}.
 
   Brest, J., Greiner, S., Boskovic, B., Mernik, M. and Zumer, V. (2006)
   Self-adapting control parameters in differential evolution: a
@@ -301,10 +314,9 @@ JDEoptim(lower, upper, fn,
   \doi{10.1007/978-3-540-68830-3_4}.
 }
 \seealso{
-  Function \code{\link[DEoptim]{DEoptim}()} in the
-  \CRANpkg{DEoptim} package has many more options than
-  \code{JDEoptim()}, but does not allow constraints in the same
-  flexible manner.
+  Function \code{\link[DEoptim]{DEoptim}()} in the \CRANpkg{DEoptim} package
+  has many more options than \code{JDEoptim()}, but does not allow constraints
+  in the same flexible manner.
 }
 \examples{
 \donttest{
