@@ -36,7 +36,7 @@ NCDEoptim(lower, upper, fn,
     objective.}
 
   \item{constr}{a vector \code{\link{function}} specifying the
-    \strong{left hand size} of equality constraints defined to equal zero
+    \strong{left-hand side} of equality constraints defined to equal zero
     (\eqn{h_j(X_i) = 0,\; j = 1,\ldots,\mathrm{meq}}),
     followed by inequality constraints defined as lesser than zero
     (\eqn{g_j(X_i) \le 0,\; j = \mathrm{meq}+1,\ldots}).  This function takes

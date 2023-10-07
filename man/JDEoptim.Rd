@@ -32,7 +32,7 @@ JDEoptim(lower, upper, fn,
     the value of the function at that point.}
 
   \item{constr}{an optional \code{\link{function}} for specifying the
-    \emph{left hand size} of nonlinear constraints under which
+    \emph{left-hand side} of nonlinear constraints under which
     we want to minimize \code{fn}.
     Nonlinear equalities should be given first and defined to equal zero
     (\eqn{h_j(X) = 0}), followed by nonlinear inequalities defined as
@@ -167,10 +167,10 @@ JDEoptim(lower, upper, fn,
       reduction is not triggered in this last case.  This constitutes an
       original feature of the implementation.
 
-      The performance of any constraint handling technique is severely
-      impaired by a small feasible region.  Therefore, equality constraints
-      are particularly difficult to handle due to the tiny feasible region
-      they define.  So, instead of explicitly including all
+      The performance of any constraint handling technique for metaheuristics
+      is severely impaired by a small feasible region.  Therefore, equality
+      constraints are particularly difficult to handle due to the tiny
+      feasible region they define.  So, instead of explicitly including all
       equality constraints in the formulation of the optimization problem,
       it might prove advantageous to eliminate some of them.
       This is done by expressing one variable \eqn{x_k} in terms of the
@@ -178,7 +178,7 @@ JDEoptim(lower, upper, fn,
       where \eqn{X = [x_1,\ldots,x_k,\ldots,x_d]} is the vector of solutions,
       thereby obtaining a relationship as
       \eqn{x_k = R_{k,j}([x_1,\ldots,x_{k-1},x_{k+1},\ldots,x_d])}.
-      But this means that both the variable \eqn{x_k} and the
+      In this way both the variable \eqn{x_k} and the
       equality constraint \eqn{h_j(X) = 0} can be removed altogether from the
       original optimization formulation, since the value of \eqn{x_k} can be
       calculated during the search process by the relationship \eqn{R_{k,j}}.
@@ -252,19 +252,19 @@ JDEoptim(lower, upper, fn,
   \doi{10.1016/j.compchemeng.2005.12.020}.
 
   Biedrzycki, R., Arabas, J. and Jagodzinski, D. (2019)
-  Bound constraints handling in Differential Evolution: An experimental study.
+  Bound constraints handling in differential evolution: An experimental study.
   \emph{Swarm and Evolutionary Computation} \bold{50}, 100453.
   \doi{10.1016/j.swevo.2018.10.004}.
 
   Brest, J., Greiner, S., Boskovic, B., Mernik, M. and Zumer, V. (2006)
-  Self-adapting control parameters in differential evolution: a
+  Self-adapting control parameters in differential evolution: A
   comparative study on numerical benchmark problems.
   \emph{IEEE Transactions on Evolutionary Computation} \bold{10}, 646--657.
   \doi{10.1109/TEVC.2006.872133}.
 
   Brest, J., Maucec, M. S. and Boskovic, B. (2021)
   Self-adaptive differential evolution algorithm with population size reduction
-  for single objective bound-constrained optimization: algorithm j21;
+  for single objective bound-constrained optimization: Algorithm j21;
   in \emph{2021 IEEE Congress on Evolutionary Computation (CEC)}.
   IEEE, pp. 817--824.
   \doi{10.1109/CEC45853.2021.9504782}.
@@ -276,19 +276,19 @@ JDEoptim(lower, upper, fn,
   McGraw-Hill, pp. 127--146.
 
   Price, K. V., Storn, R. M. and Lampinen, J. A. (2005)
-  \emph{Differential Evolution: A practical approach to global optimization}.
+  \emph{Differential evolution: A practical approach to global optimization}.
   Springer, Berlin, Heidelberg, pp. 117--118.
   \doi{10.1007/3-540-31306-0_2}.
 
   Storn, R. (2008)
-  Differential evolution research --- trends and open questions;
+  Differential evolution research --- Trends and open questions;
   in Chakraborty, U. K., Ed.,
   \emph{Advances in differential evolution}.
   SCI 143, Springer, Berlin, Heidelberg, pp. 11--12.
   \doi{10.1007/978-3-540-68830-3_1}.
 
   Storn, R. and Price, K. (1997)
-  Differential evolution - a simple and efficient heuristic for global
+  Differential evolution - A simple and efficient heuristic for global
   optimization over continuous spaces.
   \emph{Journal of Global Optimization} \bold{11}, 341--359.
   \doi{10.1023/A:1008202821328}.
