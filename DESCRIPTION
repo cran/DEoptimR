@@ -1,6 +1,6 @@
 Package: DEoptimR
-Version: 1.1-3
-Date: 2023-09-28
+Version: 1.1-3-1
+Date: 2024-11-23
 Title: Differential Evolution Optimization in Pure R
 Authors@R: c(
     person(c("Eduardo", "L. T."), "Conceicao",
@@ -11,6 +11,7 @@ Authors@R: c(
            email = "maechler@stat.math.ethz.ch",
            comment = c(ORCID = "0000-0002-8685-9910"))
     )
+URL: svn://svn.r-forge.r-project.org/svnroot/robustbase/pkg/DEoptimR
 Description: Differential Evolution (DE) stochastic heuristic algorithms for
     global optimization of problems with and without general constraints.
     The aim is to curate a collection of its variants that
@@ -30,8 +31,8 @@ Author: Eduardo L. T. Conceicao [aut, cre],
 Maintainer: Eduardo L. T. Conceicao <mail@eduardoconceicao.org>
 Repository: CRAN
 Repository/R-Forge/Project: robustbase
-Repository/R-Forge/Revision: 981
-Repository/R-Forge/DateTimeStamp: 2023-09-28 18:31:04
-Date/Publication: 2023-10-07 05:00:20 UTC
+Repository/R-Forge/Revision: 1008
+Repository/R-Forge/DateTimeStamp: 2024-11-23 19:13:45
+Date/Publication: 2024-11-23 20:20:02 UTC
 NeedsCompilation: no
-Packaged: 2023-09-28 18:45:11 UTC; rforge
+Packaged: 2024-11-23 19:25:06 UTC; rforge
