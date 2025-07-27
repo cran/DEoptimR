@@ -14,7 +14,7 @@ JDEoptim(lower, upper, fn,
          NP = 10*length(lower), Fl = 0.1, Fu = 1,
          tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
          jitter_factor = 0.001,
-         tol = 1e-15, maxiter = 200*length(lower), fnscale = 1,
+         tol = 1e-15, maxiter = 2000*length(lower), fnscale = 1,
          compare_to = c("median", "max"),
          add_to_init_pop = NULL,
          trace = FALSE, triter = 1,
@@ -85,7 +85,7 @@ JDEoptim(lower, upper, fn,
 
   \item{maxiter}{an optional positive integer specifying the maximum
     number of iterations that may be performed before the algorithm is halted.
-    Defaults to \code{200*length(lower)}.}
+    Defaults to \code{2000*length(lower)}.}
 
   \item{fnscale}{an optional positive scalar specifying the typical
     magnitude of \code{fn}.  It is used only in the \emph{stopping criterion}.

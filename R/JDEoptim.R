@@ -2,13 +2,13 @@ JDEoptim <- function(lower, upper, fn, constr = NULL, meq = 0, eps = 1e-5,
                      NP = 10*length(lower), Fl = 0.1, Fu = 1,
                      tau_F = 0.1, tau_CR = 0.1, tau_pF = 0.1,
                      jitter_factor = 0.001,
-                     tol = 1e-15, maxiter = 200*length(lower), fnscale = 1,
+                     tol = 1e-15, maxiter = 2000*length(lower), fnscale = 1,
                      compare_to = c("median", "max"),
                      add_to_init_pop = NULL,
                      trace = FALSE, triter = 1,
                      details = FALSE, ...)
 
-#   Copyright 2013, 2014, 2016, 2023, Eduardo L. T. Conceicao
+#   Copyright 2013, 2014, 2016, 2023, 2025, Eduardo L. T. Conceicao
 #   Available under the GPL (>= 2)
 
 {
